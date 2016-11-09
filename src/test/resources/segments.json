@@ -1,0 +1,161 @@
+{
+  "id": "d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family",
+  "model": {
+    "href": "/foundation/v2/modelTypes/Family/models/family1"
+  },
+  "chapter": [
+    {
+      "name": "name",
+      "attribute": [
+        {
+          "href": "/foundation/v2/attributes/name",
+          "value": [
+            "My family"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "description",
+      "attribute": [
+        {
+          "href": "/foundation/v2/attributes/description",
+          "value": [
+            "this is a description"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Image",
+      "attribute": []
+    }
+  ],
+  "href": "/business/v2/families/d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family",
+  "segmentationCriteria": [
+    {
+      "id": "8825eea3-2f15-4ade-9070-1160600794b9_Opus_Criterion",
+      "model": {
+        "href": "/foundation/v2/modelTypes/Criterion/models/criterion"
+      },
+      "chapter": [
+        {
+          "name": "name",
+          "attribute": [
+            {
+              "href": "/foundation/v2/attributes/name",
+              "value": [
+                "Localisation"
+              ]
+            }
+          ]
+        }
+      ],
+      "href": "/business/v2/segmentationCriteria/8825eea3-2f15-4ade-9070-1160600794b9_Opus_Criterion",
+      "segments": [
+        {
+          "id": "0fafc149-f7fa-4ab4-93e9-9298c77ade46_Opus_Segment",
+          "model": {
+            "href": "/foundation/v2/modelTypes/Segment/models/segment"
+          },
+          "chapter": [
+            {
+              "name": "name",
+              "attribute": [
+                {
+                  "href": "/foundation/v2/attributes/name",
+                  "value": [
+                    "Local"
+                  ]
+                }
+              ]
+            }
+          ],
+          "href": "/business/v2/segments/0fafc149-f7fa-4ab4-93e9-9298c77ade46_Opus_Segment"
+        },
+        {
+          "id": "b9735e4b-3628-49d4-951a-bd792a038fe2_Opus_Segment",
+          "model": {
+            "href": "/foundation/v2/modelTypes/Segment/models/segment"
+          },
+          "chapter": [
+            {
+              "name": "name",
+              "attribute": [
+                {
+                  "href": "/foundation/v2/attributes/name",
+                  "value": [
+                    "National"
+                  ]
+                }
+              ]
+            }
+          ],
+          "href": "/business/v2/segments/b9735e4b-3628-49d4-951a-bd792a038fe2_Opus_Segment"
+        }
+      ]
+    },
+    {
+      "id": "3d0b4d57-3206-44da-8fba-f47862a9fa95_Opus_Criterion",
+      "model": {
+        "href": "/foundation/v2/modelTypes/Criterion/models/criterion"
+      },
+      "chapter": [
+        {
+          "name": "name",
+          "attribute": [
+            {
+              "href": "/foundation/v2/attributes/name",
+              "value": [
+                "Color"
+              ]
+            }
+          ]
+        }
+      ],
+      "href": "/business/v2/segmentationCriteria/3d0b4d57-3206-44da-8fba-f47862a9fa95_Opus_Criterion",
+      "segments": [
+        {
+          "id": "3620845f-5b8d-4ffc-90c4-d815cf801b7b_Opus_Segment",
+          "model": {
+            "href": "/foundation/v2/modelTypes/Segment/models/segment"
+          },
+          "chapter": [
+            {
+              "name": "name",
+              "attribute": [
+                {
+                  "href": "/foundation/v2/attributes/name",
+                  "value": [
+                    "Red"
+                  ]
+                }
+              ]
+            }
+          ],
+          "href": "/business/v2/segments/3620845f-5b8d-4ffc-90c4-d815cf801b7b_Opus_Segment"
+        },
+        {
+          "id": "12427141-2a81-43ce-a184-e5159cd8fdff_Opus_Segment",
+          "model": {
+            "href": "/foundation/v2/modelTypes/Segment/models/segment"
+          },
+          "chapter": [
+            {
+              "name": "name",
+              "attribute": [
+                {
+                  "href": "/foundation/v2/attributes/name",
+                  "value": [
+                    "Blue"
+                  ]
+                }
+              ]
+            }
+          ],
+          "href": "/business/v2/segments/12427141-2a81-43ce-a184-e5159cd8fdff_Opus_Segment"
+        }
+      ]
+    }
+  ]
+}

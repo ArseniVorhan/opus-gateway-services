@@ -1,0 +1,40 @@
+{
+  "id": "Driller_Wikeo_Product",
+  "model": {
+    "href": "/foundation/v2/modelTypes/Product/models/Driller"
+  },
+  "correlationId": "Driller",
+  "href": "/business/v2/products/Driller_Wikeo_Product",
+  "chapter": [
+    {
+      "name": "caracs",
+      "attribute": [
+        {
+          "displayName": "Transportable",
+          "href": "/foundation/v2/attributes/transportable",
+          "value": [
+            true
+          ]
+        },
+        {
+          "displayName": "Weight",
+          "href": "/foundation/v2/attributes/weight",
+          "value": [
+            3.14
+          ]
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "attribute": [
+        {
+          "href": "/foundation/v2/attributes/designation",
+          "value": [
+            "the best driller ever"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "totalCount": 5,
+  "content": [
+    {
+      "id": "USER.1acfc985-ab01-470a-8ad6-4973f8be6ecc_Product_CNT",
+      "model": {
+        "href": "/foundation/v2/modelTypes/Product/models/ModeleProduitCoffreFort"
+      },
+      "attribute": [
+        {
+          "href": "/foundation/v2/attributes/modifiedAt",
+          "value": [
+            "Tue, 15 Jul 2014 14:19:22 GMT"
+          ]
+        },
+        {
+          "href": "/foundation/v2/attributes/designation",
+          "value": [
+            "Coffre fort electronique a emmurer TECHNOMAX GT4P"
+          ]
+        },
+        {
+          "href": "/foundation/v2/attributes/resistanceFeu",
+          "value": [
+            "Non"
+          ]
+        },
+        {
+          "href": "/foundation/v2/attributes/typeFermeture",
+          "value": [
+            "Electronique"
+          ]
+        },
+        {
+          "href": "/foundation/v2/attributes/typePose",
+          "value": [
+            "A emmurer"
+          ]
+        }
+      ],
+      "href": "/business/v2/products/USER.1acfc985-ab01-470a-8ad6-4973f8be6ecc_Product_CNT"
+    },
+    {
+      "id": "USER.f211a5e5-16c4-4d73-992a-e572f253337f_Product_CNT",
+      "model": {
+        "href": "/foundation/v2/modelTypes/Product/models/ModeleProduitCoffreFort"
+      },
+      "attribute": [
+        {
+          "href": "/foundation/v2/attributes/modifiedAt",
+          "value": [
+            "Wed, 09 Jul 2014 09:34:29 GMT"
+          ]
+        },
+        {
+          "href": "/foundation/v2/attributes/designation",
+          "value": [
+            "Coffre fort a cle a emmurer TECHNOMAX GK/4"
+          ]
+        },
+        {
+          "href": "/foundation/v2/attributes/resistanceFeu",
+          "value": [
+            "Non"
+          ]
+        },
+        {
+          "href": "/foundation/v2/attributes/typeFermeture",
+          "value": [
+            "Cle"
+          ]
+        },
+        {
+          "href": "/foundation/v2/attributes/typePose",
+          "value": [
+            "A emmurer"
+          ]
+        }
+      ],
+      "href": "/business/v2/products/USER.f211a5e5-16c4-4d73-992a-e572f253337f_Product_CNT"
+    }
+  ]
+}
