@@ -41,7 +41,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String orderingAttribute, boolean ascOrdering) {
+    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String sortAttribute, boolean ascSorting) {
         String defaultFilter = "";
         String defaultFacets = "";
         if (segments != null) {
@@ -51,8 +51,8 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
             defaultFacets = segments.stream().flatMap(segmentList -> Stream.of(segmentList)).map(Segment::getId).collect(Collectors.joining("&facet.contentSet="));
         }
         String defaultSort = "";
-        if (!StringUtils.isEmpty(orderingAttribute)) {
-            defaultSort = new StringBuilder("@(").append(orderingAttribute).append(")%20").append(ascOrdering ? "asc" : "desc").toString();
+        if (!StringUtils.isEmpty(sortAttribute)) {
+            defaultSort = new StringBuilder("@(").append(sortAttribute).append(")%20").append(ascSorting ? "asc" : "desc").toString();
         }
         FamilyProductsRequest request = new FamilyProductsRequest(familyId, defaultFilter, defaultFacets, defaultSort, Integer.toString(pageSize), Integer.toString(startFrom));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
