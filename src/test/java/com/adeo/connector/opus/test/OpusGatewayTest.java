@@ -6,10 +6,10 @@ import com.adeo.connector.opus.gateway.Segment;
 import com.adeo.connector.opus.gateway.processors.ContentSetProcessor;
 import com.adeo.connector.opus.gateway.processors.ModelTypeProcessor;
 import com.adeo.connector.opus.gateway.processors.SegmentationProcessor;
-import com.adeo.connector.opus.test.models.CriterionModelTest;
-import com.adeo.connector.opus.test.models.ProductModelTest;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
+import com.adeo.connector.opus.test.models.CriterionModelTest;
+import com.adeo.connector.opus.test.models.ProductModelTest;
 import com.adobe.connector.gateway.connection.http.HttpEndpointConnector;
 import com.adobe.connector.gateway.connection.http.OkHttpEndpointClient;
 import com.adobe.connector.services.OrchestratorService;
@@ -88,7 +88,7 @@ public class OpusGatewayTest {
 
     }
 
-    @Test()
+    @Test
     public void testProduct() {
         OpusGatewayService service = context.getService(OpusGatewayService.class);
         ProductModelTest response = service.getProduct("11639491_refproduct_Product", null);
@@ -97,14 +97,14 @@ public class OpusGatewayTest {
         Assert.assertEquals(3, response.getCharacteristic().size());
     }
 
-    @Test()
+    @Test
     public void testSegments() {
         OpusGatewayService service = context.getService(OpusGatewayService.class);
         List<CriterionModelTest> response = service.getSegments("d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family");
         Assert.assertEquals(2, response.size());
     }
 
-    @Test()
+    @Test
     public void testFamilyProducts() {
         OpusGatewayService service = context.getService(OpusGatewayService.class);
         List<Segment[]> segments = new ArrayList<>();
@@ -132,7 +132,7 @@ public class OpusGatewayTest {
         Assert.assertEquals(0, response.getTotalCount());
     }
 
-    @Test()
+    @Test
     public void testProducts() {
         List<String> ids = new ArrayList<>();
         ids.add("11639491_refproduct_Product");
