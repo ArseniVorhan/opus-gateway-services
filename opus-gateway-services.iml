@@ -4,8 +4,8 @@
     <facet type="Osmorc" name="OSGi">
       <configuration manifestGenerationMode="OsmorcControlled" manifestLocation="" jarfileLocation="opus-gateway-services-1.0-SNAPSHOT.jar" outputPathType="CompilerOutputPath" bndFileLocation="" bundlorFileLocation="" bundleActivator="" bundleSymbolicName="com.adeo.connector.adobe.opus-gateway-services" bundleVersion="1.0.0.SNAPSHOT" ignoreFilePattern="" useProjectDefaultManifestFileLocation="true" alwaysRebuildBundleJAR="false" doNotSynchronizeWithMaven="false">
         <additionalProperties>
-          <property key="Bundle-Description" value="API for connecting AEM to third party repositories" />
-          <property key="Bundle-Name" value="OPUS Connector Implementation" />
+          <property key="Bundle-Description" value="Business method for using the OPUS Gateway" />
+          <property key="Bundle-Name" value="OPUS Gateway Services" />
         </additionalProperties>
         <additionalJARContents />
       </configuration>
@@ -45,12 +45,12 @@
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.9.2" level="project" />
     <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />
-    <orderEntry type="library" name="Maven: com.adeo.connector.adobe:aem-connector-opus:1.9" level="project" />
+    <orderEntry type="library" name="Maven: com.adeo.connector.adobe:aem-connector-opus:1.9.1" level="project" />
     <orderEntry type="library" name="Maven: com.jayway.jsonpath:json-path:2.2.0" level="project" />
     <orderEntry type="library" name="Maven: net.minidev:json-smart:2.2.1" level="project" />
     <orderEntry type="library" name="Maven: net.minidev:accessors-smart:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm:5.0.3" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.connector:connector-core:2.3" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.connector:connector-core:2.3.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.sling:org.apache.sling.testing.osgi-mock:2.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.osgi:osgi.core:6.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.osgi:osgi.cmpn:6.0.0" level="project" />
