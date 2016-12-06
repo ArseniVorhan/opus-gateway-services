@@ -13,6 +13,12 @@ The purpose of this bundle is to provide convenient methods to call OPUS service
 
 **OSGi configuration pattern:** com.adeo.connector.opus.ProductRequest:/business/v2/products/{0}?mode=mask&mask=MyMask&expand=attributes:ModelTypeProcessor:com.adeo.connector.opus.models.MyProductModel
 
+### T getProduct(String productId, List<String> masks, String context)
+
+**Description:** Get a product instance based on its identifier.
+
+**OSGi configuration pattern:** com.adeo.connector.opus.ProductWithMasksRequest:/business/v2/products/{0}?mode=mask&mask={1}&expand=attributes:ModelTypeProcessor:com.adeo.connector.opus.models.MyProductModel
+
 ### List<T> getProducts(List<String> productIds)
 
 **Description:** Get a list of product instances based on identifiers. The order of products result will match the identifiers order.
@@ -24,6 +30,12 @@ The purpose of this bundle is to provide convenient methods to call OPUS service
 **Description:** Get a list of product instances for a family. The result is based on a given segmentation.
 
 **OSGi configuration pattern:** com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?filter={1}&facet.contentSet={2}&mode=mask&mask=MyMask&expand=attributes&sort={3}&pageSize={4}&startFrom={5}:ContentSetProcessor:com.adeo.connector.opus.models.MyProductModel
+
+### T getFamily(String familyId)
+
+**Description:** Get a family instance based on its identifier.
+
+**OSGi configuration pattern:** com.adeo.connector.opus.FamilyRequest:/business/v2/families/{0}?mode=mask&mask=MyMask&expand=attributes:ModelTypeProcessor:com.adeo.connector.opus.models.MyFamilyModel
 
 ### List<T> getSegments(String familyId)
 
