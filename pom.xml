@@ -4,7 +4,7 @@
 
     <groupId>com.adeo.connector.adobe</groupId>
     <artifactId>opus-gateway-services</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <packaging>bundle</packaging>
     <name>OPUS Gateway Services</name>
     <description>Business method for using the OPUS Gateway</description>
@@ -254,7 +254,7 @@
         <dependency>
             <groupId>com.adeo.connector.adobe</groupId>
             <artifactId>aem-connector-opus</artifactId>
-            <version>1.9.1</version>
+            <version>1.10</version>
         </dependency>
     </dependencies>
 </project>
