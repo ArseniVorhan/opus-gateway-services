@@ -23,6 +23,28 @@ public interface OpusGatewayService {
     <T> T getProduct(String productId, String context);
 
     /**
+     * Get a product instance based on its identifier.
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductWithMasksRequest:/business/v2/products/{0}?mode=mask&mask={1}&expand=attributes:ModelTypeProcessor:com.adeo.connector.opus.models.MyProductModel
+     *
+     * @param productId The unique identifier of the product.
+     * @param masks     The list of masks.
+     * @param context   The context to filter contextualized attributes.
+     * @param <T>       The model class expected. The model class has to match the OSGi configuration.
+     * @return a product instance.
+     */
+    <T> T getProduct(String productId, List<String> masks, String context);
+
+    /**
+     * Get a family instance based on its identifier
+     * OSGi configuration pattern: com.adeo.connector.opus.FamilyRequest:/business/v2/families/{0}?mode=mask&mask=MyMask&expand=attributes:ModelTypeProcessor:com.adeo.connector.opus.models.MyFamilyModel
+     *
+     * @param familyId The unique identifier of the family.
+     * @param <T>      The model class expected. The model class has to match the OSGi configuration.
+     * @return a family instance.
+     */
+    <T> T getFamily(String familyId);
+
+    /**
      * Get a list of product instances based on identifiers. The order of products result will match the identifiers order.
      * OSGi configuration pattern: com.adeo.connector.opus.ProductListRequest:/business/v2/products?query={0}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor:com.adeo.connector.opus.models.MyProductModel
      *

@@ -33,6 +33,21 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
+    public <T> T getProduct(String productId, List<String> masks, String context) {
+        String masksString = masks.stream().collect(Collectors.joining(","));
+        ProductWithMasksRequest request = new ProductWithMasksRequest(productId, masksString);
+        OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
+
+    @Override
+    public <T> T getFamily(String familyId) {
+        FamilyRequest request = new FamilyRequest(familyId);
+        OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
+
+    @Override
     public <T> List<T> getProducts(List<String> productIds) {
         String query = productIds.stream().collect(Collectors.joining(" OR "));
         ProductListRequest request = new ProductListRequest(query);
