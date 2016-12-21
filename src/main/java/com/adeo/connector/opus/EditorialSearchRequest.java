@@ -7,7 +7,7 @@ import com.adeo.connector.opus.gateway.OpusRequest;
  */
 public class EditorialSearchRequest extends OpusRequest {
 
-    public EditorialSearchRequest(String... arguments) {
-        super(arguments);
+    public EditorialSearchRequest(Class modelClass, String... arguments) {
+        super(modelClass, arguments);
     }
 }

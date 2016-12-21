@@ -7,7 +7,7 @@ import com.adeo.connector.opus.gateway.OpusRequest;
  */
 public class RegionalStoreListRequest extends OpusRequest {
 
-    public RegionalStoreListRequest(String... arguments) {
-        super(arguments);
+    public RegionalStoreListRequest(Class modelClass, String... arguments) {
+        super(modelClass, arguments);
     }
 }

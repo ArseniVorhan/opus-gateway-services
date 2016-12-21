@@ -7,8 +7,8 @@ import com.adeo.connector.opus.gateway.OpusRequest;
  */
 public class ProductRequest extends OpusRequest {
 
-    public ProductRequest(String... arguments) {
-        super(arguments);
+    public ProductRequest(Class modelClass, String... arguments) {
+        super(modelClass, arguments);
     }
 
 

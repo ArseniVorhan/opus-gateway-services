@@ -26,37 +26,37 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     private OrchestratorService orchestratorService;
 
     @Override
-    public <T> T getProduct(String productId, String context) {
-        ProductRequest request = new ProductRequest(productId);
+    public <T> T getProduct(String productId, String context, Class modelClass) {
+        ProductRequest request = new ProductRequest(modelClass, productId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> T getProduct(String productId, List<String> masks, String context) {
+    public <T> T getProduct(String productId, List<String> masks, String context, Class modelClass) {
         String masksString = masks.stream().collect(Collectors.joining(","));
-        ProductWithMasksRequest request = new ProductWithMasksRequest(productId, masksString);
+        ProductWithMasksRequest request = new ProductWithMasksRequest(modelClass, productId, masksString);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> T getFamily(String familyId) {
-        FamilyRequest request = new FamilyRequest(familyId);
+    public <T> T getFamily(String familyId, Class modelClass) {
+        FamilyRequest request = new FamilyRequest(modelClass, familyId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> List<T> getProducts(List<String> productIds) {
+    public <T> List<T> getProducts(List<String> productIds, Class modelClass) {
         String query = productIds.stream().collect(Collectors.joining(" OR "));
-        ProductListRequest request = new ProductListRequest(query);
+        ProductListRequest request = new ProductListRequest(modelClass, query);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0).getResults();
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String sortAttribute, boolean ascSorting) {
+    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String sortAttribute, boolean ascSorting, Class modelClass) {
         String defaultFilter = "";
         String defaultFacets = "";
         if (segments != null) {
@@ -69,56 +69,56 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         if (!StringUtils.isEmpty(sortAttribute)) {
             defaultSort = new StringBuilder("@(").append(sortAttribute).append(")%20").append(ascSorting ? "asc" : "desc").toString();
         }
-        FamilyProductsRequest request = new FamilyProductsRequest(familyId, defaultFilter, defaultFacets, defaultSort, Integer.toString(pageSize), Integer.toString(startFrom));
+        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFilter, defaultFacets, defaultSort, Integer.toString(pageSize), Integer.toString(startFrom));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> List<T> getSegments(String familyId) {
-        SegmentationRequest request = new SegmentationRequest(familyId);
+    public <T> List<T> getSegments(String familyId, Class modelClass) {
+        SegmentationRequest request = new SegmentationRequest(modelClass, familyId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults();
     }
 
     @Override
-    public <T> ContentSet<T> getStores() {
-        StoreListRequest request = new StoreListRequest();
+    public <T> ContentSet<T> getStores(Class modelClass) {
+        StoreListRequest request = new StoreListRequest(modelClass);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> ContentSet<T> getStores(String region) {
-        RegionalStoreListRequest request = new RegionalStoreListRequest(region);
+    public <T> ContentSet<T> getStores(String region, Class modelClass) {
+        RegionalStoreListRequest request = new RegionalStoreListRequest(modelClass, region);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> T getStore(String storeId) {
-        ProductRequest request = new ProductRequest(storeId);
+    public <T> T getStore(String storeId, Class modelClass) {
+        StoreRequest request = new StoreRequest(modelClass, storeId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> ContentSet<T> findEditorials(String keyword, String modelCode) {
-        EditorialSearchRequest request = new EditorialSearchRequest(keyword, modelCode);
+    public <T> ContentSet<T> findEditorials(String keyword, String modelCode, Class modelClass) {
+        EditorialSearchRequest request = new EditorialSearchRequest(modelClass, keyword, modelCode);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> ContentSet<T> findProducts(String keyword, String context) {
-        ProductSearchRequest request = new ProductSearchRequest(keyword, context);
+    public <T> ContentSet<T> findProducts(String keyword, String context, Class modelClass) {
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, context);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> ContentSet<T> findServices(String keyword) {
-        ProductSearchRequest request = new ProductSearchRequest(keyword);
+    public <T> ContentSet<T> findServices(String keyword, Class modelClass) {
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
