@@ -62,7 +62,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> T getProduct(String productId, Class modelClass) {
+    public <T> T getProduct(String productId, String context, Class modelClass) {
         ProductRequest request = new ProductRequest(modelClass, productId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
@@ -147,6 +147,19 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         return response.getResults().get(0);
     }
 
+    public <T> ContentSet<T> getStoresContent(@Nonnull String familyId,
+                                              @Nonnull List<String[]> storeSegmentIds,
+                                              @Nonnull String[] allStoreSegmentIds,
+                                              @Nonnull List<String> existingStoreIds, Class modelClass) {
+        String defaultFilter = createFilterQuery(storeSegmentIds);
+        String defaultFacets = createFacetsQuery(allStoreSegmentIds);
+        String query = createCollectStoresQuery(existingStoreIds);
+        final StoreListRequest request = new StoreListRequest(modelClass, familyId, defaultFilter, defaultFacets, query,
+                String.valueOf(0), String.valueOf(MAX_PAGE_SIZE_OPUS));
+        final ConnectorResponse<ContentSet<T>> response = orchestratorService.execute(request);
+        return response != null ? response.getResults().get(0) : EMPTY_CONTENT_SET;
+    }
+
     @Override
     public <T> T getStore(String storeId, Class modelClass) {
         StoreRequest request = new StoreRequest(modelClass, storeId);
@@ -162,14 +175,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> findProducts(String keyword, String context, Class modelClass) {
-        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, context);
-        OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response.getResults().get(0);
-    }
-
-    @Override
-    public <T> ContentSet<T> findProducts(String keyword, Class modelClass, int startFrom, int pageSize) {
+    public <T> ContentSet<T> findProducts(String keyword, String context, Class modelClass, int startFrom, int pageSize) {
         ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
@@ -183,7 +189,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProductsContent(@Nonnull String familyId,
+    public <T> ContentSet<T> getProductsContent(@Nonnull String familyId, String context,
                                                 @Nonnull List<String[]> productSegmentIds,
                                                 @Nonnull String[] allProductSegmentIds,
                                                 int startFrom, int pageSize, Class modelClass) {
@@ -192,19 +198,6 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         String defaultFacets = createFacetsQuery(allProductSegmentIds);
         FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFilter, defaultFacets, String.valueOf(pageSize),
                 String.valueOf(startFrom));
-        final ConnectorResponse<ContentSet<T>> response = orchestratorService.execute(request);
-        return response != null ? response.getResults().get(0) : EMPTY_CONTENT_SET;
-    }
-
-    public <T> ContentSet<T> getStoresContent(@Nonnull String familyId,
-                                              @Nonnull List<String[]> storeSegmentIds,
-                                              @Nonnull String[] allStoreSegmentIds,
-                                              @Nonnull List<String> existingStoreIds, Class modelClass) {
-        String defaultFilter = createFilterQuery(storeSegmentIds);
-        String defaultFacets = createFacetsQuery(allStoreSegmentIds);
-        String query = createCollectStoresQuery(existingStoreIds);
-        final StoreListRequest request = new StoreListRequest(modelClass, familyId, defaultFilter, defaultFacets, query,
-                String.valueOf(0), String.valueOf(MAX_PAGE_SIZE_OPUS));
         final ConnectorResponse<ContentSet<T>> response = orchestratorService.execute(request);
         return response != null ? response.getResults().get(0) : EMPTY_CONTENT_SET;
     }

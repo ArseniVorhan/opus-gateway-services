@@ -18,10 +18,11 @@ public interface OpusGatewayService {
      *
      * @param productId  The unique identifier of the product.
      * @param modelClass The model class used to parse the OPUS response.
+     * @param context    The context to filter contextualized attributes.
      * @param <T>        The model class expected. The model class has to match the OSGi configuration.
      * @return a product instance.
      */
-    <T> T getProduct(String productId, Class modelClass);
+    <T> T getProduct(String productId, String context, Class modelClass);
 
     /**
      * Get a product instance based on its identifier.
@@ -126,6 +127,19 @@ public interface OpusGatewayService {
     <T> ContentSet<T> getStores(String region, Class modelClass);
 
     /**
+     *
+     * @param familyId stores family id in OPUS
+     * @param storeSegmentIds checked segment IDs
+     * @param allStoreSegmentIds IDs of all segments of current family. Needed to get count of stores for each segment.
+     * @param existingStoreIds IDs of stores that exist in AEM
+     * @param modelClass The model class used to parse the OPUS response.
+     * @param <T> The model class expected. The model class has to match the OSGi configuration.
+     * @return The product instances.
+     */
+    <T> ContentSet<T> getStoresContent(@Nonnull String familyId, @Nonnull List<String[]> storeSegmentIds,
+                                       @Nonnull String[] allStoreSegmentIds,
+                                       @Nonnull List<String> existingStoreIds, Class modelClass);
+    /**
      * Get a store based on its identifier.
      * OSGi configuration pattern: com.adeo.connector.opus.StoreRequest:/business/v2/pointsOfSale/{0}?mode=mask&mask=MyMask&expand=attributes:ModelTypeProcessor
      *
@@ -155,23 +169,12 @@ public interface OpusGatewayService {
      * @param keyword    The keyword used for the search.
      * @param context    The context to filter contextualized attributes.
      * @param modelClass The model class used to parse the OPUS response.
-     * @param <T>        The model class expected. The model class has to match the OSGi configuration.
-     * @return The product instances.
-     */
-    <T> ContentSet<T> findProducts(String keyword, String context, Class modelClass);
-
-    /**
-     * Find a list of products based on a keyword.
-     * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchRequest:/business/v2/products?query=keyword%3D({0})?mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
-     *
-     * @param keyword    The keyword used for the search.
-     * @param modelClass The model class used to parse the OPUS response.
      * @param startFrom pagination parameter.
      * @param pageSize pagination parameter.
      * @param <T>        The model class expected. The model class has to match the OSGi configuration.
      * @return The product instances.
      */
-    <T> ContentSet<T> findProducts(String keyword, Class modelClass, int startFrom, int pageSize);
+    <T> ContentSet<T> findProducts(String keyword, String context, Class modelClass, int startFrom, int pageSize);
 
 
     /**
@@ -189,6 +192,7 @@ public interface OpusGatewayService {
      * Finds a list of products based on checked segmentIds and facets with counts of of products for each segment.
      *
      * @param familyId id of product family in OPUS
+     * @param context    The context to filter contextualized attributes.
      * @param productSegmentIds checked segment IDs
      * @param allProductSegmentIds IDs of all segments of current family. Needed to get count of products for each segment.
      * @param startFrom pagination parameter.
@@ -197,20 +201,6 @@ public interface OpusGatewayService {
      * @param <T> The model class expected. The model class has to match the OSGi configuration.
      * @return The product instances.
      */
-    <T> ContentSet<T> getProductsContent(@Nonnull String familyId, @Nonnull List<String[]> productSegmentIds, @Nonnull String[] allProductSegmentIds,
+    <T> ContentSet<T> getProductsContent(@Nonnull String familyId, String context, @Nonnull List<String[]> productSegmentIds, @Nonnull String[] allProductSegmentIds,
                                          int startFrom, int pageSize, Class modelClass);
-
-    /**
-     *
-     * @param familyId stores family id in OPUS
-     * @param storeSegmentIds checked segment IDs
-     * @param allStoreSegmentIds IDs of all segments of current family. Needed to get count of stores for each segment.
-     * @param existingStoreIds IDs of stores that exist in AEM
-     * @param modelClass The model class used to parse the OPUS response.
-     * @param <T> The model class expected. The model class has to match the OSGi configuration.
-     * @return The product instances.
-     */
-    <T> ContentSet<T> getStoresContent(@Nonnull String familyId, @Nonnull List<String[]> storeSegmentIds,
-                                       @Nonnull String[] allStoreSegmentIds,
-                                       @Nonnull List<String> existingStoreIds, Class modelClass);
 }
