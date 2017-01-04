@@ -176,7 +176,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
 
     @Override
     public <T> ContentSet<T> findProducts(String keyword, String context, Class modelClass, int startFrom, int pageSize) {
-        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword);
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, context);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
