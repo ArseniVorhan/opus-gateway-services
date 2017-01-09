@@ -159,10 +159,12 @@ public interface OpusGatewayService {
      * @param allProductSegmentIds IDs of all segments of current family. Needed to get count of products for each segment.
      * @param startFrom pagination parameter.
      * @param pageSize pagination parameter.
+     * @param sortAttribute The attribute used for sorting results.
+     * @param ascSorting    The order of the sorting. If true, the order is ascending. If false, the order id descending.
      * @param modelClass The model class used to parse the OPUS response.
      * @param <T> The model class expected. The model class has to match the OSGi configuration.
      * @return The product instances.
      */
     <T> ContentSet<T> getProductsContent(@Nonnull String familyId, String context, @Nonnull List<String[]> productSegmentIds, @Nonnull String[] allProductSegmentIds,
-                                         int startFrom, int pageSize, Class modelClass);
+                                         int startFrom, int pageSize, String sortAttribute, boolean ascSorting, Class modelClass);
 }

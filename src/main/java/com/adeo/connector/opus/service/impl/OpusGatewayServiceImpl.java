@@ -159,12 +159,17 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     public <T> ContentSet<T> getProductsContent(@Nonnull String familyId, String context,
                                                 @Nonnull List<String[]> productSegmentIds,
                                                 @Nonnull String[] allProductSegmentIds,
-                                                int startFrom, int pageSize, Class modelClass) {
+                                                int startFrom, int pageSize, String sortAttribute,
+                                                boolean ascSorting, Class modelClass) {
 
         String defaultFilter = createFilterQuery(productSegmentIds);
         String defaultFacets = createFacetsQuery(allProductSegmentIds);
-        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFilter, defaultFacets, String.valueOf(pageSize),
-                String.valueOf(startFrom));
+        String defaultSort = "";
+        if (!StringUtils.isEmpty(sortAttribute)) {
+            defaultSort = new StringBuilder("@(").append(sortAttribute).append(")%20").append(ascSorting ? "asc" : "desc").toString();
+        }
+        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFilter, defaultFacets, defaultSort,
+                String.valueOf(pageSize), String.valueOf(startFrom));
         final ConnectorResponse<ContentSet<T>> response = orchestratorService.execute(request);
         return response != null ? response.getResults().get(0) : EMPTY_CONTENT_SET;
     }
