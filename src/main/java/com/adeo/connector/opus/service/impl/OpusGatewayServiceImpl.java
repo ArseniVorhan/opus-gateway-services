@@ -108,43 +108,10 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String sortAttribute, boolean ascSorting, Class modelClass) {
-        String defaultFilter = "";
-        String defaultFacets = "";
-        if (segments != null) {
-            StringBuilder contentSet = new StringBuilder("inContentSet:");
-            contentSet.append(segments.stream().map(s -> Stream.of(s).filter(Segment::isEnabled).map(Segment::getId).collect(Collectors.joining(" OR ", "(", ")"))).filter(s -> !s.equals("()")).collect(Collectors.joining(" AND ")));
-            defaultFilter = contentSet.toString();
-            defaultFacets = segments.stream().flatMap(segmentList -> Stream.of(segmentList)).map(Segment::getId).collect(Collectors.joining("&facet.contentSet="));
-        }
-        String defaultSort = "";
-        if (!StringUtils.isEmpty(sortAttribute)) {
-            defaultSort = new StringBuilder("@(").append(sortAttribute).append(")%20").append(ascSorting ? "asc" : "desc").toString();
-        }
-        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFilter, defaultFacets, defaultSort, Integer.toString(pageSize), Integer.toString(startFrom));
-        OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response.getResults().get(0);
-    }
-
-    @Override
     public <T> List<T> getSegments(String familyId, Class modelClass) {
         SegmentationRequest request = new SegmentationRequest(modelClass, familyId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response != null ? response.getResults() : Collections.emptyList();
-    }
-
-    @Override
-    public <T> ContentSet<T> getStores(Class modelClass) {
-        StoreListRequest request = new StoreListRequest(modelClass);
-        OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response.getResults().get(0);
-    }
-
-    @Override
-    public <T> ContentSet<T> getStores(String region, Class modelClass) {
-        RegionalStoreListRequest request = new RegionalStoreListRequest(modelClass, region);
-        OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response.getResults().get(0);
     }
 
     public <T> ContentSet<T> getStoresContent(@Nonnull String familyId,
