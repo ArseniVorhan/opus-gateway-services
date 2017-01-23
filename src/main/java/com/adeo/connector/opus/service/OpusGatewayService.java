@@ -154,5 +154,11 @@ public interface OpusGatewayService {
      */
     <T> ContentSet<T> findServices(String keyword, Class modelClass);
 
-
+    /**
+     * @param startFrom number of start page.
+     * @param pageSize  count of products on one page.
+     * @param <T>       The model class expected. The model class has to match the OSGi configuration.
+     * @return ContentSet with all regions
+     */
+    <T> ContentSet<T> getRegions(String startFrom, String pageSize, Class modelClass);
 }
