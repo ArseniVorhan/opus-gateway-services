@@ -161,4 +161,11 @@ public interface OpusGatewayService {
      * @return ContentSet with all regions
      */
     <T> ContentSet<T> getRegions(String startFrom, String pageSize, Class modelClass);
+
+    /**
+     * @param regionId  id of region.
+     * @param <T>       The model class expected. The model class has to match the OSGi configuration.
+     * @return ContentSet with all regions
+     */
+    <T> T getRegion(String regionId, Class modelClass);
 }

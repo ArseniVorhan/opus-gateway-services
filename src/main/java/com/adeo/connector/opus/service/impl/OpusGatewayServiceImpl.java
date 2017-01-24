@@ -125,8 +125,16 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
 
     @Override
     public <T> ContentSet<T> getRegions(String startFrom, String pageSize, Class modelClass) {
-        final RegionRequest regionRequest = new RegionRequest(modelClass ,startFrom, pageSize);
-        final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionRequest);
+        final RegionsRequest regionsRequest = new RegionsRequest(modelClass ,startFrom, pageSize);
+        final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionsRequest);
         return response.getResults().get(0);
+    }
+
+    @Override
+    public <T> T getRegion(String regionId, Class modelClass) {
+        final RegionRequest regionsRequest = new RegionRequest(modelClass, regionId);
+        final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionsRequest);
+        ContentSet<T> contentSet = response.getResults().get(0);
+        return !contentSet.getResults().isEmpty() ? contentSet.getResults().get(0) : null;
     }
 }
