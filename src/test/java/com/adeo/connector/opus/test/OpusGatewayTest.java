@@ -11,6 +11,7 @@ import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
 import com.adeo.connector.opus.test.models.CriterionModelTest;
 import com.adeo.connector.opus.test.models.ProductModelTest;
+import com.adeo.connector.opus.test.models.RegionTest;
 import com.adeo.connector.opus.test.models.SegmentModelTest;
 import com.adobe.connector.gateway.connection.http.HttpEndpointConnector;
 import com.adobe.connector.gateway.connection.http.OkHttpEndpointClient;
@@ -61,6 +62,8 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?filter={1}&facet.contentSet={2}&mode=mask&mask=StaticMask,Characteristcs&expand=attributes&sort={3}&pageSize={4}&startFrom={5}:ContentSetProcessor");
         //testProducts
         mappings.add("com.adeo.connector.opus.ProductListRequest:/business/v2/products?query={0}&mode=mask&mask=StaticMask,Characteristcs&expand=attributes:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.RegionsRequest:/business/v2/Region?startFrom={0}&pageSize={1}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.RegionRequest:/business/v2/Region?filter=%40(regionId3)%3D{0}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
 
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
@@ -149,5 +152,14 @@ public class OpusGatewayTest {
         Assert.assertEquals(2, response.size());
     }
 
-
+    @Test
+    public void testRegions() {
+        ContentSet<RegionTest> response = opusGatewayService.getRegions("1", "500", RegionTest.class);
+        Assert.assertEquals(32, response.getTotalCount());
+    }
+    @Test
+    public void testRegion() {
+        RegionTest region = opusGatewayService.getRegion("2393_Opus_Region", RegionTest.class);
+        Assert.assertEquals("2393", region.getRegionId());
+    }
 }
