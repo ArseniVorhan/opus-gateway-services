@@ -157,6 +157,7 @@ public class OpusGatewayTest {
         ContentSet<RegionTest> response = opusGatewayService.getRegions("1", "500", RegionTest.class);
         Assert.assertEquals(32, response.getTotalCount());
     }
+
     @Test
     public void testRegion() {
         RegionTest region = opusGatewayService.getRegion("2393_Opus_Region", RegionTest.class);
