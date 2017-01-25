@@ -137,4 +137,12 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         ContentSet<T> contentSet = response.getResults().get(0);
         return !contentSet.getResults().isEmpty() ? contentSet.getResults().get(0) : null;
     }
+
+    @Override
+    public <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, String[] brandNames, Class modelClass){
+        String brandNamesString = Stream.of(brandNames).collect(Collectors.joining("%2C"));
+        final ProductSearchBrandRequest request = new ProductSearchBrandRequest(modelClass, startFrom, pageSize, brandNamesString);
+        final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
 }

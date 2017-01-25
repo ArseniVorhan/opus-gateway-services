@@ -64,6 +64,7 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.ProductListRequest:/business/v2/products?query={0}&mode=mask&mask=StaticMask,Characteristcs&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RegionsRequest:/business/v2/Region?startFrom={0}&pageSize={1}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RegionRequest:/business/v2/Region?filter=%40(regionId3)%3D{0}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.ProductSearchBrandRequest:/business/v2/products?startFrom={0}&pageSize={1}&facet.field=%40(377%40PimFeat)&filter=%40(377%40PimFeat)%3D({2})&mode=mask&mask=StaticMask&expand=attributes:ContentSetProcessor");
 
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
@@ -162,5 +163,12 @@ public class OpusGatewayTest {
     public void testRegion() {
         RegionTest region = opusGatewayService.getRegion("2393_Opus_Region", RegionTest.class);
         Assert.assertEquals("2393", region.getRegionId());
+    }
+
+    @Test
+    public void testSearchProductsByBrand() {
+        String[] brands = {"INSPIRE", "LEXMAN", "SENSEA"};
+        ContentSet contentSet = opusGatewayService.getProductsByBrand("1", "500", brands, ProductModelTest.class);
+        Assert.assertEquals(39, contentSet.getTotalCount());
     }
 }

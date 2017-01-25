@@ -168,4 +168,13 @@ public interface OpusGatewayService {
      * @return a region instance.
      */
     <T> T getRegion(String regionId, Class modelClass);
+
+    /**
+     * @param startFrom number of start page.
+     * @param pageSize  count of products on one page.
+     * @param brandNames  array of brand names.
+     * @param <T>       The model class expected. The model class has to match the OSGi configuration.
+     * @return ContentSet with all regions
+     */
+    <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, String[] brandNames, Class modelClass);
 }
