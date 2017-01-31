@@ -10,6 +10,7 @@ import com.adeo.connector.opus.gateway.processors.SegmentationProcessor;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
 import com.adeo.connector.opus.test.models.CriterionModelTest;
+import com.adeo.connector.opus.test.models.FamilyTest;
 import com.adeo.connector.opus.test.models.ProductModelTest;
 import com.adeo.connector.opus.test.models.RegionTest;
 import com.adeo.connector.opus.test.models.SegmentModelTest;
@@ -67,6 +68,7 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.RegionsRequest:/business/v2/Region?startFrom={0}&pageSize={1}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RegionRequest:/business/v2/Region?filter=%40(regionId3)%3D{0}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.ProductSearchBrandRequest:/business/v2/products?startFrom={0}&pageSize={1}&facet.field=%40(377%40PimFeat)&filter=%40(377%40PimFeat)%3D({2})&facet.field=inContentSet&facet.pattern=.%2AFamily&mode=mask&mask=StaticMask&expand=attributes:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.FamiliesRequest:/business/v2/families?mode=mask&mask=family&startFrom={0}&pageSize={1}:ContentSetProcessor");
 
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
@@ -181,5 +183,12 @@ public class OpusGatewayTest {
         Map<String, Integer> familyCounts = new HashMap<>();
         familyCounts.put("b72fdee1-3c9a-42ab-bdd8-8c6831bdedc6_Opus_Family", 5);
         Assert.assertEquals(familyCounts, contentSet.getFacets());
+    }
+
+    @Test
+    public void testGetFamilies() {
+        ContentSet<FamilyTest> contentSet = opusGatewayService.getFamilies("1", "10", FamilyTest.class);
+        Assert.assertEquals(9, contentSet.getTotalCount());
+        Assert.assertEquals("products for comparison", contentSet.getResults().get(0).getName());
     }
 }

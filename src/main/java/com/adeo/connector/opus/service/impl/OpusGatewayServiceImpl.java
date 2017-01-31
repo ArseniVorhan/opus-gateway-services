@@ -145,4 +145,11 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
+
+    @Override
+    public <T> ContentSet<T> getFamilies(String startFrom, String pageSize, Class modelClass) {
+        final FamiliesRequest familiesRequest = new FamiliesRequest(modelClass, startFrom, pageSize);
+        final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(familiesRequest);
+        return response.getResults().get(0);
+    }
 }
