@@ -65,8 +65,8 @@ public interface OpusGatewayService {
      *
      * @param familyId         The unique identifier of the family.
      * @param context          The context to filter contextualized attributes.
-     * @param pageSize         The number of products to get.
      * @param startFrom        The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
+     * @param pageSize         The number of products to get.
      * @param segmentIds       The segmentIds used by the family.
      * @param allSegmentIds    IDs of all segments of family. Needed to get count of products per each segment.
      * @param attributes       Attributes. Needed to get count of products per each attribute value.
@@ -77,7 +77,7 @@ public interface OpusGatewayService {
      * @param <T>              The model class expected. The model class has to match the OSGi configuration.
      * @return The list of product instances.
      */
-    <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<String[]> segmentIds, String[] allSegmentIds,
+    <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<String[]> segmentIds, String[] allSegmentIds,
                                   String[] attributes, Map<String, String> attributeValues, String sortAttribute, boolean ascSorting, Class modelClass);
 
     /**

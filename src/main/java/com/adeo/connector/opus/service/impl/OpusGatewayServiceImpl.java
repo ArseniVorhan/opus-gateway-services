@@ -57,7 +57,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<String[]> segmentIds, String[] allSegmentIds,
+    public <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<String[]> segmentIds, String[] allSegmentIds,
                                          String[] attributes, Map<String, String> attributesValues, String sortAttribute, boolean ascSorting, Class modelClass) {
         String defaultFacets = "";
         String defaultAttributes = "";
