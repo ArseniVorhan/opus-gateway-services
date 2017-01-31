@@ -5,6 +5,7 @@ import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.Segment;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Business class to use the OPUS gateway services
@@ -62,18 +63,22 @@ public interface OpusGatewayService {
      * Get a list of product instances for a family. The result is based on a given segmentation.
      * OSGi configuration pattern: com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?filter={1}&facet.contentSet={2}&mode=mask&mask=MyMask&expand=attributes&sort={3}&pageSize={4}&startFrom={5}:ContentSetProcessor
      *
-     * @param familyId      The unique identifier of the family.
-     * @param context       The context to filter contextualized attributes.
-     * @param pageSize      The number of products to get.
-     * @param startFrom     The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
-     * @param segments      The segments used by the family.
-     * @param sortAttribute The attribute used for sorting results.
-     * @param ascSorting    The order of the sorting. If true, the order is ascending. If false, the order id descending.
-     * @param modelClass    The model class used to parse the OPUS response.
-     * @param <T>           The model class expected. The model class has to match the OSGi configuration.
+     * @param familyId         The unique identifier of the family.
+     * @param context          The context to filter contextualized attributes.
+     * @param pageSize         The number of products to get.
+     * @param startFrom        The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
+     * @param segmentIds       The segmentIds used by the family.
+     * @param allSegmentIds    IDs of all segments of family. Needed to get count of products per each segment.
+     * @param attributes       Attributes. Needed to get count of products per each attribute value.
+     * @param attributeValues  Names and values of attributes. Needed for filtering.
+     * @param sortAttribute    The attribute used for sorting results.
+     * @param ascSorting       The order of the sorting. If true, the order is ascending. If false, the order id descending.
+     * @param modelClass       The model class used to parse the OPUS response.
+     * @param <T>              The model class expected. The model class has to match the OSGi configuration.
      * @return The list of product instances.
      */
-    <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String sortAttribute, boolean ascSorting, Class modelClass);
+    <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<String[]> segmentIds, String[] allSegmentIds,
+                                  String[] attributes, Map<String, String> attributeValues, String sortAttribute, boolean ascSorting, Class modelClass);
 
     /**
      * Get a list of segments for a given family.
