@@ -1,11 +1,15 @@
 package com.adeo.connector.opus.service.impl;
 
 import com.adeo.connector.opus.*;
+import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusResponse;
 import com.adeo.connector.opus.gateway.Segment;
+import com.adeo.connector.opus.model.OpusObject;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adobe.connector.services.OrchestratorService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -22,18 +26,20 @@ import java.util.stream.Stream;
 @Service(OpusGatewayService.class)
 public class OpusGatewayServiceImpl implements OpusGatewayService {
 
+    private Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+
     @Reference
     private OrchestratorService orchestratorService;
 
     @Override
-    public <T> T getProduct(String productId, String context, Class modelClass) {
+    public <T> T getProduct(String productId, String context, Class<T> modelClass) {
         ProductRequest request = new ProductRequest(modelClass, productId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> T getProduct(String productId, List<String> masks, String context, Class modelClass) {
+    public <T> T getProduct(String productId, List<String> masks, String context, Class<T> modelClass) {
         String masksString = masks.stream().collect(Collectors.joining(","));
         ProductWithMasksRequest request = new ProductWithMasksRequest(modelClass, productId, masksString);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
@@ -41,14 +47,14 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> T getFamily(String familyId, Class modelClass) {
+    public <T> T getFamily(String familyId, Class<T> modelClass) {
         FamilyRequest request = new FamilyRequest(modelClass, familyId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> List<T> getProducts(List<String> productIds, Class modelClass) {
+    public <T> List<T> getProducts(List<String> productIds, Class<T> modelClass) {
         String query = productIds.stream().collect(Collectors.joining(" OR "));
         ProductListRequest request = new ProductListRequest(modelClass, query);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
@@ -56,7 +62,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String sortAttribute, boolean ascSorting, Class modelClass) {
+    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String sortAttribute, boolean ascSorting, Class<T> modelClass) {
         String defaultFilter = "";
         String defaultFacets = "";
         if (segments != null) {
@@ -75,58 +81,150 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> List<T> getSegments(String familyId, Class modelClass) {
+    public <T> List<T> getSegments(String familyId, Class<T> modelClass) {
         SegmentationRequest request = new SegmentationRequest(modelClass, familyId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults();
     }
 
     @Override
-    public <T> ContentSet<T> getStores(Class modelClass) {
+    public <T> ContentSet<T> getStores(Class<T> modelClass) {
         StoreListRequest request = new StoreListRequest(modelClass);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> ContentSet<T> getStores(String region, Class modelClass) {
+    public <T> ContentSet<T> getStores(String region, Class<T> modelClass) {
         RegionalStoreListRequest request = new RegionalStoreListRequest(modelClass, region);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> T getStore(String storeId, Class modelClass) {
+    public <T> T getStore(String storeId, Class<T> modelClass) {
         StoreRequest request = new StoreRequest(modelClass, storeId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> ContentSet<T> findEditorials(String keyword, String modelCode, Class modelClass) {
+    public <T> ContentSet<T> findEditorials(String keyword, String modelCode, Class<T> modelClass) {
         EditorialSearchRequest request = new EditorialSearchRequest(modelClass, keyword, modelCode);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> ContentSet<T> findProducts(String keyword, String context, Class modelClass) {
+    public <T> ContentSet<T> findProducts(String keyword, String context, Class<T> modelClass) {
         ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, context);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> ContentSet<T> findServices(String keyword, Class modelClass) {
+    public <T> ContentSet<T> findServices(String keyword, Class<T> modelClass) {
         ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword);
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> ContentSet<T> getRegions(String startFrom, String pageSize, Class modelClass) {
-        final RegionRequest regionRequest = new RegionRequest(modelClass ,startFrom, pageSize);
+    public <T> ContentSet<T> getRegions(String startFrom, String pageSize, Class<T> modelClass) {
+        final RegionRequest regionRequest = new RegionRequest(modelClass, startFrom, pageSize);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionRequest);
         return response.getResults().get(0);
+    }
+
+    @Override
+    public void createFaq(OpusObject body) throws OpusException {
+        PostFaqRequest request = new PostFaqRequest(null);
+        request.setBody(gson.toJson(body));
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public void updateFaq(String faqId, OpusObject body) throws OpusException {
+        PutFaqRequest request = new PutFaqRequest(null, faqId);
+        request.setBody(gson.toJson(body));
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteFaq(String faqId) throws OpusException {
+        DeleteFaqRequest request = new DeleteFaqRequest(null, faqId);
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public <T> T getFaq(String faqId, Class<T> modelClass) {
+        GetFaqRequest request = new GetFaqRequest(modelClass, faqId);
+        OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
+
+    @Override
+    public void createService(OpusObject body) throws OpusException {
+        PostServiceRequest request = new PostServiceRequest(null);
+        request.setBody(gson.toJson(body));
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public void updateService(String serviceId, OpusObject body) throws OpusException {
+        PutServiceRequest request = new PutServiceRequest(null, serviceId);
+        request.setBody(gson.toJson(body));
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteService(String serviceId) throws OpusException {
+        DeleteServiceRequest request = new DeleteServiceRequest(null, serviceId);
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public <T> T getService(String serviceId, Class<T> modelClass) {
+        GetServiceRequest request = new GetServiceRequest(modelClass, serviceId);
+        OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
+
+    @Override
+    public void createEditorialMedia(OpusObject body) throws OpusException {
+        PostEditorialMediaRequest request = new PostEditorialMediaRequest(null);
+        request.setBody(gson.toJson(body));
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public void updateEditorialMedia(String editorialMediaId, OpusObject body) throws OpusException {
+        PutEditorialMediaRequest request = new PutEditorialMediaRequest(null, editorialMediaId);
+        request.setBody(gson.toJson(body));
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
     }
 }

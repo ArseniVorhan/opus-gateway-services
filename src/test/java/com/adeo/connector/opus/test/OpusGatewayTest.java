@@ -11,7 +11,6 @@ import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
 import com.adeo.connector.opus.test.models.CriterionModelTest;
 import com.adeo.connector.opus.test.models.ProductModelTest;
-import com.adeo.connector.opus.test.models.SegmentModelTest;
 import com.adobe.connector.gateway.connection.http.HttpEndpointConnector;
 import com.adobe.connector.gateway.connection.http.OkHttpEndpointClient;
 import com.adobe.connector.services.OrchestratorService;
@@ -108,7 +107,7 @@ public class OpusGatewayTest {
     @Test
     public void testSegments() {
         OpusGatewayService service = context.getService(OpusGatewayService.class);
-        List<CriterionModelTest> response = service.getSegments("d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family", SegmentModelTest.class);
+        List<CriterionModelTest> response = service.getSegments("d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family", CriterionModelTest.class);
         Assert.assertEquals(2, response.size());
     }
 
