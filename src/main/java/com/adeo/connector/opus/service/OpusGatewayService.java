@@ -167,6 +167,13 @@ public interface OpusGatewayService {
      */
     <T> ContentSet<T> getRegions(String startFrom, String pageSize, Class<T> modelClass);
 
+/**
+     * @param regionId  id of region.
+     * @param <T>       The model class expected. The model class has to match the OSGi configuration.
+     * @return a region instance.
+     */
+    <T> T getRegion(String regionId, Class modelClass);
+
     /**
      * Post a new FAQ to OPUS
      * OSGi configuration pattern: com.adeo.connector.opus.PostFaqRequest:/business/v2/editorials:GsonProcessor:POST
