@@ -167,9 +167,9 @@ public interface OpusGatewayService {
      */
     <T> ContentSet<T> getRegions(String startFrom, String pageSize, Class<T> modelClass);
 
-/**
-     * @param regionId  id of region.
-     * @param <T>       The model class expected. The model class has to match the OSGi configuration.
+    /**
+     * @param regionId id of region.
+     * @param <T>      The model class expected. The model class has to match the OSGi configuration.
      * @return a region instance.
      */
     <T> T getRegion(String regionId, Class modelClass);
@@ -249,9 +249,50 @@ public interface OpusGatewayService {
      * @param serviceId  The unique identifier of the Service.
      * @param modelClass The model class used to parse the OPUS response.
      * @param <T>        The model class expected.
-     * @return a faq instance
+     * @return a Service instance
      */
     <T> T getService(String serviceId, Class<T> modelClass);
+
+
+    /**
+     * Post a new How To to OPUS
+     * OSGi configuration pattern: com.adeo.connector.opus.PostHowToRequest:/business/v2/editorials:GsonProcessor:POST
+     *
+     * @param body JSON body of the POST request.
+     * @throws OpusException
+     */
+    void createHowTo(OpusObject body) throws OpusException;
+
+    /**
+     * Update a How To in OPUS
+     * OSGi configuration pattern: com.adeo.connector.opus.PutHowToRequest:/business/v2/editorials/{0}?diff=true&sources=AEM:GsonProcessor:PUT
+     *
+     * @param serviceId The unique identifier of the How To.
+     * @param body      JSON body of the PUT request.
+     * @throws OpusException
+     */
+    void updateHowTo(String serviceId, OpusObject body) throws OpusException;
+
+    /**
+     * Delete a How To in OPUS
+     * OSGi configuration pattern: com.adeo.connector.opus.DeleteHowToRequest:/business/v2/editorials/{0}:GsonProcessor:DELETE
+     *
+     * @param serviceId The unique identifier of the How To.
+     * @throws OpusException
+     */
+    void deleteHowTo(String serviceId) throws OpusException;
+
+    /**
+     * Get a How To instance based on its identifier
+     * OSGi configuration pattern: com.adeo.connector.opus.GetHowToRequest:/business/v2/editorials/{0}:ModelTypeProcessor
+     *
+     * @param serviceId  The unique identifier of the How To.
+     * @param modelClass The model class used to parse the OPUS response.
+     * @param <T>        The model class expected.
+     * @return a How To instance
+     */
+    <T> T getHowTo(String serviceId, Class<T> modelClass);
+
 
     /**
      * Post a new Editorial Media in OPUS

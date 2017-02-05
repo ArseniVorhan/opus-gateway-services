@@ -130,13 +130,13 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getRegions(String startFrom, String pageSize, Class modelClass) {
-        final RegionsRequest regionsRequest = new RegionsRequest(modelClass ,startFrom, pageSize);
+    public <T> ContentSet<T> getRegions(String startFrom, String pageSize, Class<T> modelClass) {
+        final RegionsRequest regionsRequest = new RegionsRequest(modelClass, startFrom, pageSize);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionsRequest);
         return response.getResults().get(0);
     }
 
-@Override
+    @Override
     public <T> T getRegion(String regionId, Class modelClass) {
         final RegionRequest regionsRequest = new RegionRequest(modelClass, regionId);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionsRequest);
@@ -212,6 +212,42 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     @Override
     public <T> T getService(String serviceId, Class<T> modelClass) {
         GetServiceRequest request = new GetServiceRequest(modelClass, serviceId);
+        OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
+
+    @Override
+    public void createHowTo(OpusObject body) throws OpusException {
+        PostHowToRequest request = new PostHowToRequest(null);
+        request.setBody(gson.toJson(body));
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public void updateHowTo(String serviceId, OpusObject body) throws OpusException {
+        PutHowToRequest request = new PutHowToRequest(null, serviceId);
+        request.setBody(gson.toJson(body));
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteHowTo(String serviceId) throws OpusException {
+        DeleteHowToRequest request = new DeleteHowToRequest(null, serviceId);
+        OpusResponse response = (OpusResponse) orchestratorService.execute(request);
+        if (response.getStatus() >= 400) {
+            throw new OpusException(response.getMessage());
+        }
+    }
+
+    @Override
+    public <T> T getHowTo(String serviceId, Class<T> modelClass) {
+        GetHowToRequest request = new GetHowToRequest(modelClass, serviceId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
