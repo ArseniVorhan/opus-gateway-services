@@ -180,4 +180,15 @@ public interface OpusGatewayService {
      * @return ContentSet with all regions
      */
     <T> ContentSet<T> getProductsByBrand(String[] brandNames, Class modelClass);
+
+    /**
+     *
+     * @param startFrom  number of start page.
+     * @param pageSize   count of products on one page.
+     * @param modelClass The model class used to parse the OPUS response.
+     * @param <T>        The model class expected. The model class has to match the OSGi configuration.
+     * @return           ContentSet with all families
+     */
+    <T> ContentSet<T> getFamilies(String startFrom, String pageSize, Class modelClass);
+
 }
