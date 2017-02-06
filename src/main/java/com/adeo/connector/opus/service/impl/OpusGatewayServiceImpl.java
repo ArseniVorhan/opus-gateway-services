@@ -12,6 +12,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,20 +57,49 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String sortAttribute, boolean ascSorting, Class modelClass) {
-        String defaultFilter = "";
+    public <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<String[]> segmentIds, String[] allSegmentIds,
+                                         String[] attributes, Map<String, String> attributesValues, String sortAttribute, boolean ascSorting, Class modelClass) {
         String defaultFacets = "";
-        if (segments != null) {
-            StringBuilder contentSet = new StringBuilder("inContentSet:");
-            contentSet.append(segments.stream().map(s -> Stream.of(s).filter(Segment::isEnabled).map(Segment::getId).collect(Collectors.joining(" OR ", "(", ")"))).filter(s -> !s.equals("()")).collect(Collectors.joining(" AND ")));
-            defaultFilter = contentSet.toString();
-            defaultFacets = segments.stream().flatMap(segmentList -> Stream.of(segmentList)).map(Segment::getId).collect(Collectors.joining("&facet.contentSet="));
-        }
+        String defaultAttributes = "";
+        String filterSegments = "";
+        String filterAttributes = "";
         String defaultSort = "";
+        if (segmentIds != null) {
+            StringBuilder contentSet = new StringBuilder("inContentSet:");
+            contentSet.append(segmentIds.stream()
+                    .map(s -> Stream.of(s)
+                            .collect(Collectors.joining(" OR ", "(", ")")))
+                    .filter(s -> !s.equals("()"))
+                    .collect(Collectors.joining(" AND ")));
+            filterSegments = contentSet.toString();
+        }
+        if (allSegmentIds != null){
+            defaultFacets = Stream.of(allSegmentIds)
+                    .collect(Collectors.joining("%2C"));
+        }
+
+        if (attributes != null){
+            defaultAttributes = Stream.of(attributes)
+                    .map(attribute -> "@(" + attribute + ")")
+                    .collect(Collectors.joining("&facet.attribute="));
+        }
+
+        if (attributesValues != null) {
+            filterAttributes = attributesValues.keySet().stream()
+                    .map(attribute -> "@(" + attribute + ")%3A" + attributesValues.get(attribute))
+                    .collect(Collectors.joining("&filter="));
+        }
+
+
+        String filter = Stream.of(filterAttributes, filterSegments)
+                .filter(StringUtils::isNotEmpty)
+                .collect(Collectors.joining(" AND "));
+
         if (!StringUtils.isEmpty(sortAttribute)) {
             defaultSort = new StringBuilder("@(").append(sortAttribute).append(")%20").append(ascSorting ? "asc" : "desc").toString();
         }
-        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFilter, defaultFacets, defaultSort, Integer.toString(pageSize), Integer.toString(startFrom));
+        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFacets, defaultAttributes,
+                filter, defaultSort, Integer.toString(pageSize), Integer.toString(startFrom));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
