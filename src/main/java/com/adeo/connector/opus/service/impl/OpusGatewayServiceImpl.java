@@ -4,6 +4,7 @@ import com.adeo.connector.opus.*;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusResponse;
 import com.adeo.connector.opus.gateway.Segment;
+import com.adeo.connector.opus.models.Attribute;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adobe.connector.services.OrchestratorService;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,6 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,39 +57,41 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<String[]> segmentIds, String[] allSegmentIds,
-                                         String[] attributes, Map<String, String> attributesValues, String sortAttribute, boolean ascSorting, Class modelClass) {
+    public <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<Segment[]> segments,
+                                         List<Attribute> attributes, String sortAttribute, boolean ascSorting, Class modelClass) {
         String defaultFacets = "";
         String defaultAttributes = "";
         String filterSegments = "";
         String filterAttributes = "";
         String defaultSort = "";
-        if (segmentIds != null) {
+
+        if (segments != null) {
             StringBuilder contentSet = new StringBuilder("inContentSet:");
-            contentSet.append(segmentIds.stream()
+            contentSet.append(segments.stream()
                     .map(s -> Stream.of(s)
+                            .filter(Segment::isEnabled)
+                            .map(Segment::getId)
                             .collect(Collectors.joining(" OR ", "(", ")")))
                     .filter(s -> !s.equals("()"))
                     .collect(Collectors.joining(" AND ")));
             filterSegments = contentSet.toString();
-        }
-        if (allSegmentIds != null){
-            defaultFacets = Stream.of(allSegmentIds)
+            defaultFacets = segments.stream()
+                    .flatMap(Stream::of)
+                    .map(Segment::getId)
                     .collect(Collectors.joining("%2C"));
         }
 
         if (attributes != null){
-            defaultAttributes = Stream.of(attributes)
-                    .map(attribute -> "@(" + attribute + ")")
+            defaultAttributes = attributes.stream()
+                    .map(attribute -> "@(" + attribute.getName() + ")")
                     .collect(Collectors.joining("&facet.attribute="));
         }
 
-        if (attributesValues != null) {
-            filterAttributes = attributesValues.keySet().stream()
-                    .map(attribute -> "@(" + attribute + ")%3A" + attributesValues.get(attribute))
+        if (attributes != null) {
+            filterAttributes = attributes.stream()
+                    .map(attribute -> "@(" + attribute.getName() + ")%3A" + Stream.of(attribute.getValues()).collect(Collectors.joining("%2C")))
                     .collect(Collectors.joining("&filter="));
         }
-
 
         String filter = Stream.of(filterAttributes, filterSegments)
                 .filter(StringUtils::isNotEmpty)
@@ -169,9 +171,9 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProductsByBrand(String[] brandNames, Class modelClass){
+    public <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, String[] brandNames, Class modelClass){
         String brandNamesString = Stream.of(brandNames).collect(Collectors.joining("%2C"));
-        final ProductSearchBrandRequest request = new ProductSearchBrandRequest(modelClass, brandNamesString);
+        final ProductSearchBrandRequest request = new ProductSearchBrandRequest(modelClass, startFrom, pageSize, brandNamesString);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
