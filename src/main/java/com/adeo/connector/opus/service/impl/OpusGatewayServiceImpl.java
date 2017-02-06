@@ -81,12 +81,6 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
                     .collect(Collectors.joining("%2C"));
         }
 
-        if (attributes != null){
-            defaultAttributes = attributes.stream()
-                    .map(attribute -> "@(" + attribute.getName() + ")")
-                    .collect(Collectors.joining("&facet.attribute="));
-        }
-
         if (attributes != null) {
             filterAttributes = attributes.stream()
                     .map(attribute -> "@(" + attribute.getName() + ")%3A" + Stream.of(attribute.getValues()).collect(Collectors.joining("%2C")))
