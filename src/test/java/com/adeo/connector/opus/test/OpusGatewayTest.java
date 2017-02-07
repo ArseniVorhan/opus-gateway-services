@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpusGatewayTest {
@@ -68,6 +69,7 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.RegionsRequest:/business/v2/Region?startFrom={0}&pageSize={1}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RegionRequest:/business/v2/Region?filter=%40(regionId3)%3D{0}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.ProductSearchBrandRequest:/business/v2/products?startFrom={0}&pageSize={1}&facet.field=%40(377%40PimFeat)&filter=%40(377%40PimFeat)%3D({2})&facet.field=inContentSet&facet.pattern=.%2AFamily&mode=mask&mask=StaticMask&expand=attributes:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.ProductCountsBrandRequest:/business/v2/products?filter=%40(377%40PimFeat)%3A({0})&facet.field=%40(377%40PimFeat)&pageSize=0:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.FamiliesRequest:/business/v2/families?mode=mask&mask=family&startFrom={0}&pageSize={1}:ContentSetProcessor");
 
 
@@ -176,16 +178,20 @@ public class OpusGatewayTest {
     }
 
     @Test
-    public void testSearchProductsByBrand() {
-        String[] brands = {"INSPIRE", "LEXMAN", "SENSEA"};
-        ContentSet contentSet = opusGatewayService.getProductsByBrand("1", "10", brands, ProductModelTest.class);
-        Assert.assertEquals(2070, contentSet.getTotalCount());
+    public void testProductCountsByBrand() {
+        String[] brands = {"STANDERS", "AXTON", "SENSEA"};
+        Map<String, Integer> productCounts = new HashMap<>();
+        productCounts.put("STANDERS", 533);
+        productCounts.put("SENSEA", 190);
+        productCounts.put("AXTON", 154);
+        ContentSet contentSet = opusGatewayService.getProductCountsByBrand(Arrays.asList(brands), ProductModelTest.class);
+        Assert.assertEquals(productCounts, contentSet.getFacets());
     }
 
     @Test
     public void testSearchProductsByBrandGroupedByFamily() {
         String[] brands = {"INSPIRE", "SENSEA"};
-        ContentSet contentSet = opusGatewayService.getProductsByBrand("1", "10", brands, ProductModelTest.class);
+        ContentSet contentSet = opusGatewayService.getProductsByBrand("1", "10", Arrays.asList(brands), ProductModelTest.class);
         Map<String, Integer> familyCounts = new HashMap<>();
         familyCounts.put("8f4b391d-00d1-4150-a55a-00a761520e1d_Opus_Family", 7);
         familyCounts.put("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", 30);

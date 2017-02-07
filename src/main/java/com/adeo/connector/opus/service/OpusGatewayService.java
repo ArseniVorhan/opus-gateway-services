@@ -180,14 +180,24 @@ public interface OpusGatewayService {
     <T> T getRegion(String regionId, Class modelClass);
 
     /**
+     * Get a contentSet with counts of products for each brand.
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductCountsBrandRequest:/business/v2/products?filter=%40(377%40PimFeat)%3A({0})&facet.field=%40(377%40PimFeat)&pageSize=0:ContentSetProcessor
+     *
+     * @param brandNames  list of brand names.
+     * @param <T>         The model class expected. The model class has to match the OSGi configuration.
+     * @return            ContentSet with all regions
+     */
+    <T> ContentSet<T> getProductCountsByBrand(List<String> brandNames, Class modelClass);
+
+    /**
      * Get a list of products by brands.
      * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchBrandRequest:/business/v2/products?startFrom={0}&pageSize={1}&facet.field=%40(377%40PimFeat)&filter=%40(377%40PimFeat)%3D({2})&facet.field=inContentSet&facet.pattern=.%2AFamily&mode=mask&mask=StaticMask&expand=attributes:ContentSetProcessor
      *
-     * @param brandNames  array of brand names.
-     * @param <T>       The model class expected. The model class has to match the OSGi configuration.
-     * @return ContentSet with all regions
+     * @param brandNames  list of brand names.
+     * @param <T>         The model class expected. The model class has to match the OSGi configuration.
+     * @return            ContentSet with all regions
      */
-    <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, String[] brandNames, Class modelClass);
+    <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, List<String> brandNames, Class modelClass);
 
     /**
      * Get a list list of all families.
