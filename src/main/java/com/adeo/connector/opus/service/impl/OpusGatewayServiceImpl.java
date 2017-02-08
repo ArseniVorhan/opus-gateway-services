@@ -5,6 +5,7 @@ import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusResponse;
 import com.adeo.connector.opus.gateway.Segment;
+import com.adeo.connector.opus.model.OpusObject;
 import com.adeo.connector.opus.models.Attribute;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adobe.connector.services.OrchestratorService;
@@ -63,7 +64,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
 
     @Override
     public <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<Segment[]> segments,
-                                         List<Attribute> attributes, String sortAttribute, boolean ascSorting, Class modelClass) {
+                                         List<Attribute> attributes, String sortAttribute, boolean ascSorting, Class<T> modelClass) {
         String defaultFacets = "";
         String defaultAttributes = "";
         String filterSegments = "";
@@ -162,7 +163,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> T getRegion(String regionId, Class modelClass) {
+    public <T> T getRegion(String regionId, Class<T> modelClass) {
         final RegionRequest regionsRequest = new RegionRequest(modelClass, regionId);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionsRequest);
         ContentSet<T> contentSet = response.getResults().get(0);
@@ -297,8 +298,8 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         }
     }
 
- @Override
-    public <T> ContentSet<T> getProductCountsByBrand(List<String> brandNames, Class modelClass) {
+    @Override
+    public <T> ContentSet<T> getProductCountsByBrand(List<String> brandNames, Class<T> modelClass) {
         String brandNamesString = brandNames.stream().collect(Collectors.joining("%20OR%20"));
         final ProductCountsBrandRequest request = new ProductCountsBrandRequest(modelClass, brandNamesString);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
@@ -306,7 +307,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, List<String> brandNames, Class modelClass){
+    public <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, List<String> brandNames, Class<T> modelClass) {
         String brandNamesString = brandNames.stream().collect(Collectors.joining("%2C"));
         final ProductSearchBrandRequest request = new ProductSearchBrandRequest(modelClass, startFrom, pageSize, brandNamesString);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
@@ -314,7 +315,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getFamilies(String startFrom, String pageSize, Class modelClass) {
+    public <T> ContentSet<T> getFamilies(String startFrom, String pageSize, Class<T> modelClass) {
         final FamiliesRequest familiesRequest = new FamiliesRequest(modelClass, startFrom, pageSize);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(familiesRequest);
         return response.getResults().get(0);
