@@ -7,12 +7,13 @@ import com.adeo.connector.opus.gateway.Segment;
 import com.adeo.connector.opus.gateway.processors.ContentSetProcessor;
 import com.adeo.connector.opus.gateway.processors.ModelTypeProcessor;
 import com.adeo.connector.opus.gateway.processors.SegmentationProcessor;
+import com.adeo.connector.opus.models.Attribute;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
 import com.adeo.connector.opus.test.models.CriterionModelTest;
+import com.adeo.connector.opus.test.models.FamilyTest;
 import com.adeo.connector.opus.test.models.ProductModelTest;
 import com.adeo.connector.opus.test.models.RegionTest;
-import com.adeo.connector.opus.test.models.SegmentModelTest;
 import com.adobe.connector.gateway.connection.http.HttpEndpointConnector;
 import com.adobe.connector.gateway.connection.http.OkHttpEndpointClient;
 import com.adobe.connector.services.OrchestratorService;
@@ -30,7 +31,10 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpusGatewayTest {
@@ -59,11 +63,14 @@ public class OpusGatewayTest {
         //testSegments
         mappings.add("com.adeo.connector.opus.SegmentationRequest:/business/v2/families/{0}?expand=subContents(depth%3A2)&mode=mask&mask=WebtopList:SegmentationProcessor");
         //testFamilyProducts
-        mappings.add("com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?filter={1}&facet.contentSet={2}&mode=mask&mask=StaticMask,Characteristcs&expand=attributes&sort={3}&pageSize={4}&startFrom={5}:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?facet.contentSet={1}&facet.attribute={2}&filter={3}&mode=mask&mask=StaticMask,Characteristcs&expand=attributes&sort={4}&startFrom={5}&pageSize={6}:ContentSetProcessor");
         //testProducts
         mappings.add("com.adeo.connector.opus.ProductListRequest:/business/v2/products?query={0}&mode=mask&mask=StaticMask,Characteristcs&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RegionsRequest:/business/v2/Region?startFrom={0}&pageSize={1}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RegionRequest:/business/v2/Region?filter=%40(regionId3)%3D{0}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.ProductSearchBrandRequest:/business/v2/products?startFrom={0}&pageSize={1}&facet.field=%40(377%40PimFeat)&filter=%40(377%40PimFeat)%3D({2})&facet.field=inContentSet&facet.pattern=.%2AFamily&mode=mask&mask=StaticMask&expand=attributes:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.ProductCountsBrandRequest:/business/v2/products?filter=%40(377%40PimFeat)%3A({0})&facet.field=%40(377%40PimFeat)&pageSize=0:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.FamiliesRequest:/business/v2/families?mode=mask&mask=family&startFrom={0}&pageSize={1}:ContentSetProcessor");
 
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
@@ -111,36 +118,42 @@ public class OpusGatewayTest {
     @Test
     public void testSegments() {
         OpusGatewayService service = context.getService(OpusGatewayService.class);
-        List<CriterionModelTest> response = service.getSegments("d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family", CriterionModelTest.class);
-        Assert.assertEquals(2, response.size());
+        List<CriterionModelTest> response = service.getSegments("b55f25d8-111a-4a1b-92bf-2e20bd4fd2f1_Opus_Family", CriterionModelTest.class);
+        Assert.assertEquals(6, response.size());
+        Assert.assertEquals("NO NAME", response.get(0).getSegments().get(0).getName());
     }
 
     @Test
     public void testFamilyProducts() {
         OpusGatewayService service = context.getService(OpusGatewayService.class);
+
+        List<Attribute> attributes = new ArrayList<>();
+        String[] values = {"SENSEA"};
+        attributes.add(new Attribute("377%40PimFeat", values));
+
+        ContentSet<ProductModelTest> response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 20, 1, null, attributes,
+                "letterRange", false, ProductModelTest.class);
+        Assert.assertEquals(189, response.getTotalCount());
+
         List<Segment[]> segments = new ArrayList<>();
-        segments.add(new Segment[]{new Segment("b9735e4b-3628-49d4-951a-bd792a038fe2_Opus_Segment", true), new Segment("bd7be009-8904-4d5c-9b1a-21db361cbb30_Opus_Segment", true)});
-        segments.add(new Segment[]{new Segment("3620845f-5b8d-4ffc-90c4-d815cf801b7b_Opus_Segment", false), new Segment("12427141-2a81-43ce-a184-e5159cd8fdff_Opus_Segment", false)});
-        ContentSet<ProductModelTest> response = service.getProducts("d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family", null, 20, 1, segments, "letterRange", false, ProductModelTest.class);
-        Assert.assertEquals(1893, response.getTotalCount());
+        segments.add(new Segment[]{new Segment("d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment", true),
+                new Segment("7b072c4c-708f-407a-bcbb-331a20dd9ad2_Opus_Segment", false)});
+        segments.add(new Segment[]{new Segment("2b55f235-df07-4719-aa14-8133187900ec_Opus_Segment", false),
+                new Segment("37ebaad8-a740-43b4-b129-6d7adaba936c_Opus_Segment", false),
+                new Segment("a1b6556a-6da2-4abd-a748-be94afd6ea8c_Opus_Segment", false)});
+        segments.add(new Segment[]{new Segment("134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment", true),
+                new Segment("9609cac7-eca2-4467-a89a-c6baa4ed4984_Opus_Segment", false)});
+        response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
+                segments, null, "letterRange", false, ProductModelTest.class);
+        Assert.assertEquals(1, response.getTotalCount());
 
-        segments = new ArrayList<>();
-        segments.add(new Segment[]{new Segment("b9735e4b-3628-49d4-951a-bd792a038fe2_Opus_Segment", true), new Segment("bd7be009-8904-4d5c-9b1a-21db361cbb30_Opus_Segment", false)});
-        segments.add(new Segment[]{new Segment("3620845f-5b8d-4ffc-90c4-d815cf801b7b_Opus_Segment", false), new Segment("12427141-2a81-43ce-a184-e5159cd8fdff_Opus_Segment", false)});
-        response = service.getProducts("d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family", null, 20, 1, segments, "letterRange", true, ProductModelTest.class);
-        Assert.assertEquals(1512, response.getTotalCount());
 
-        segments = new ArrayList<>();
-        segments.add(new Segment[]{new Segment("b9735e4b-3628-49d4-951a-bd792a038fe2_Opus_Segment", false), new Segment("bd7be009-8904-4d5c-9b1a-21db361cbb30_Opus_Segment", true)});
-        segments.add(new Segment[]{new Segment("3620845f-5b8d-4ffc-90c4-d815cf801b7b_Opus_Segment", false), new Segment("12427141-2a81-43ce-a184-e5159cd8fdff_Opus_Segment", false)});
-        response = service.getProducts("d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family", null, 20, 1, segments, "letterRange", true, ProductModelTest.class);
-        Assert.assertEquals(381, response.getTotalCount());
-
-        segments = new ArrayList<>();
-        segments.add(new Segment[]{new Segment("b9735e4b-3628-49d4-951a-bd792a038fe2_Opus_Segment", true), new Segment("bd7be009-8904-4d5c-9b1a-21db361cbb30_Opus_Segment", true)});
-        segments.add(new Segment[]{new Segment("3620845f-5b8d-4ffc-90c4-d815cf801b7b_Opus_Segment", true), new Segment("12427141-2a81-43ce-a184-e5159cd8fdff_Opus_Segment", false)});
-        response = service.getProducts("d9446ea6-86fe-421e-ad4f-102fcb0365c3_Opus_Family", null, 20, 1, segments, "letterRange", true, ProductModelTest.class);
-        Assert.assertEquals(0, response.getTotalCount());
+        attributes = new ArrayList<>();
+        values = new String[]{"SENSEA", "NO NAME"};
+        attributes.add(new Attribute("377%40PimFeat", values));
+        response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
+                segments, attributes, null, false, ProductModelTest.class);
+        Assert.assertEquals(1, response.getTotalCount());
     }
 
     @Test
@@ -155,12 +168,40 @@ public class OpusGatewayTest {
     @Test
     public void testRegions() {
         ContentSet<RegionTest> response = opusGatewayService.getRegions("1", "500", RegionTest.class);
-        Assert.assertEquals(32, response.getTotalCount());
+        Assert.assertEquals(30, response.getTotalCount());
     }
 
     @Test
     public void testRegion() {
         RegionTest region = opusGatewayService.getRegion("2393_Opus_Region", RegionTest.class);
         Assert.assertEquals("2393", region.getRegionId());
+    }
+
+    @Test
+    public void testProductCountsByBrand() {
+        String[] brands = {"STANDERS", "AXTON", "SENSEA"};
+        Map<String, Integer> productCounts = new HashMap<>();
+        productCounts.put("STANDERS", 533);
+        productCounts.put("SENSEA", 190);
+        productCounts.put("AXTON", 154);
+        ContentSet contentSet = opusGatewayService.getProductCountsByBrand(Arrays.asList(brands), ProductModelTest.class);
+        Assert.assertEquals(productCounts, contentSet.getFacets());
+    }
+
+    @Test
+    public void testSearchProductsByBrandGroupedByFamily() {
+        String[] brands = {"INSPIRE", "SENSEA"};
+        ContentSet contentSet = opusGatewayService.getProductsByBrand("1", "10", Arrays.asList(brands), ProductModelTest.class);
+        Map<String, Integer> familyCounts = new HashMap<>();
+        familyCounts.put("8f4b391d-00d1-4150-a55a-00a761520e1d_Opus_Family", 7);
+        familyCounts.put("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", 30);
+        Assert.assertEquals(familyCounts, contentSet.getFacets());
+    }
+
+    @Test
+    public void testGetFamilies() {
+        ContentSet<FamilyTest> contentSet = opusGatewayService.getFamilies("1", "10", FamilyTest.class);
+        Assert.assertEquals(12, contentSet.getTotalCount());
+        Assert.assertEquals("products for comparison", contentSet.getResults().get(0).getName());
     }
 }

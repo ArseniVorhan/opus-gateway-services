@@ -6,6 +6,7 @@ import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusResponse;
 import com.adeo.connector.opus.gateway.Segment;
 import com.adeo.connector.opus.model.OpusObject;
+import com.adeo.connector.opus.models.Attribute;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adobe.connector.services.OrchestratorService;
 import com.google.gson.Gson;
@@ -62,20 +63,45 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int pageSize, int startFrom, List<Segment[]> segments, String sortAttribute, boolean ascSorting, Class<T> modelClass) {
-        String defaultFilter = "";
+    public <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<Segment[]> segments,
+                                         List<Attribute> attributes, String sortAttribute, boolean ascSorting, Class<T> modelClass) {
         String defaultFacets = "";
+        String defaultAttributes = "";
+        String filterSegments = "";
+        String filterAttributes = "";
+        String defaultSort = "";
+
         if (segments != null) {
             StringBuilder contentSet = new StringBuilder("inContentSet:");
-            contentSet.append(segments.stream().map(s -> Stream.of(s).filter(Segment::isEnabled).map(Segment::getId).collect(Collectors.joining(" OR ", "(", ")"))).filter(s -> !s.equals("()")).collect(Collectors.joining(" AND ")));
-            defaultFilter = contentSet.toString();
-            defaultFacets = segments.stream().flatMap(segmentList -> Stream.of(segmentList)).map(Segment::getId).collect(Collectors.joining("&facet.contentSet="));
+            contentSet.append(segments.stream()
+                    .map(s -> Stream.of(s)
+                            .filter(Segment::isEnabled)
+                            .map(Segment::getId)
+                            .collect(Collectors.joining(" OR ", "(", ")")))
+                    .filter(s -> !s.equals("()"))
+                    .collect(Collectors.joining(" AND ")));
+            filterSegments = contentSet.toString();
+            defaultFacets = segments.stream()
+                    .flatMap(Stream::of)
+                    .map(Segment::getId)
+                    .collect(Collectors.joining("%2C"));
         }
-        String defaultSort = "";
+
+        if (attributes != null) {
+            filterAttributes = attributes.stream()
+                    .map(attribute -> "@(" + attribute.getName() + ")%3A" + Stream.of(attribute.getValues()).collect(Collectors.joining("%2C")))
+                    .collect(Collectors.joining("&filter="));
+        }
+
+        String filter = Stream.of(filterAttributes, filterSegments)
+                .filter(StringUtils::isNotEmpty)
+                .collect(Collectors.joining(" AND "));
+
         if (!StringUtils.isEmpty(sortAttribute)) {
             defaultSort = new StringBuilder("@(").append(sortAttribute).append(")%20").append(ascSorting ? "asc" : "desc").toString();
         }
-        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFilter, defaultFacets, defaultSort, Integer.toString(pageSize), Integer.toString(startFrom));
+        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFacets, defaultAttributes,
+                filter, defaultSort, Integer.toString(pageSize), Integer.toString(startFrom));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
@@ -137,7 +163,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> T getRegion(String regionId, Class modelClass) {
+    public <T> T getRegion(String regionId, Class<T> modelClass) {
         final RegionRequest regionsRequest = new RegionRequest(modelClass, regionId);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionsRequest);
         ContentSet<T> contentSet = response.getResults().get(0);
@@ -271,4 +297,28 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
             throw new OpusException(response.getMessage());
         }
     }
+
+    @Override
+    public <T> ContentSet<T> getProductCountsByBrand(List<String> brandNames, Class<T> modelClass) {
+        String brandNamesString = brandNames.stream().collect(Collectors.joining("%20OR%20"));
+        final ProductCountsBrandRequest request = new ProductCountsBrandRequest(modelClass, brandNamesString);
+        final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
+
+    @Override
+    public <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, List<String> brandNames, Class<T> modelClass) {
+        String brandNamesString = brandNames.stream().collect(Collectors.joining("%2C"));
+        final ProductSearchBrandRequest request = new ProductSearchBrandRequest(modelClass, startFrom, pageSize, brandNamesString);
+        final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
+
+    @Override
+    public <T> ContentSet<T> getFamilies(String startFrom, String pageSize, Class<T> modelClass) {
+        final FamiliesRequest familiesRequest = new FamiliesRequest(modelClass, startFrom, pageSize);
+        final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(familiesRequest);
+        return response.getResults().get(0);
+    }
+
 }
