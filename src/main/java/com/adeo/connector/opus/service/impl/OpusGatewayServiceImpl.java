@@ -5,6 +5,8 @@ import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusResponse;
 import com.adeo.connector.opus.gateway.Segment;
+import com.adeo.connector.opus.gateway.SortingSet;
+import com.adeo.connector.opus.model.OpusObject;
 import com.adeo.connector.opus.models.Attribute;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adobe.connector.services.OrchestratorService;
@@ -318,6 +320,13 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         final FamiliesRequest familiesRequest = new FamiliesRequest(modelClass, startFrom, pageSize);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(familiesRequest);
         return response.getResults().get(0);
+    }
+    
+    @Override
+    public SortingSet getSortings(String familyId, Class modelClass) {
+    	SortingListRequest request = new SortingListRequest(modelClass, familyId);
+    	OpusResponse<SortingSet> response = (OpusResponse) orchestratorService.execute(request);
+    	return response.getResults().get(0);
     }
 
 }
