@@ -4,11 +4,11 @@ import com.adeo.connector.opus.*;
 import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusResponse;
-import com.adeo.connector.opus.gateway.Segment;
+import com.adeo.connector.opus.gateway.Ranking;
+import com.adeo.connector.opus.service.OpusGatewayService;
+import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.models.FamilySegment;
 import com.adeo.connector.opus.service.models.OpusObject;
-import com.adeo.connector.opus.service.models.FamilyAttribute;
-import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adobe.connector.services.OrchestratorService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -76,15 +76,15 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
             StringBuilder contentSet = new StringBuilder("inContentSet:");
             contentSet.append(segments.stream()
                     .map(s -> Stream.of(s)
-                            .filter(Segment::isEnabled)
-                            .map(Segment::getId)
+                            .filter(FamilySegment::isEnabled)
+                            .map(FamilySegment::getId)
                             .collect(Collectors.joining(" OR ", "(", ")")))
                     .filter(s -> !s.equals("()"))
                     .collect(Collectors.joining(" AND ")));
             filterSegments = contentSet.toString();
             defaultFacets = segments.stream()
                     .flatMap(Stream::of)
-                    .map(Segment::getId)
+                    .map(FamilySegment::getId)
                     .collect(Collectors.joining("%2C"));
         }
 
@@ -321,12 +321,12 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(familiesRequest);
         return response.getResults().get(0);
     }
-    
+
     @Override
-    public SortingSet getSortings(String familyId, Class modelClass) {
-    	SortingListRequest request = new SortingListRequest(modelClass, familyId);
-    	OpusResponse<SortingSet> response = (OpusResponse) orchestratorService.execute(request);
-    	return response.getResults().get(0);
+    public Ranking getSortings(String familyId) {
+        RankingListRequest request = new RankingListRequest(null, familyId);
+        OpusResponse<Ranking> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
     }
 
 }

@@ -3,8 +3,8 @@ package com.adeo.connector.opus.service;
 
 import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
+import com.adeo.connector.opus.gateway.Ranking;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
-import com.adeo.connector.opus.gateway.SortingSet;
 import com.adeo.connector.opus.service.models.FamilySegment;
 import com.adeo.connector.opus.service.models.OpusObject;
 
@@ -354,10 +354,11 @@ public interface OpusGatewayService {
 
     /**
      * Get a list of Sortings for a particular family
-     * @param familyId
-     * @param modelClass
-     * @return {@link SortingSet} will all the Sorts
+     * OSGi configuration pattern: com.adeo.connector.opus.RankingListRequest:/business/v2/families/{0}/contentSet/ranking:RankingProcessor
+     *
+     * @param familyId The unique identifier of the family
+     * @return {@link Ranking} will all the ranking items
      */
-    SortingSet getSortings(String familyId, Class modelClass);
+    Ranking getSortings(String familyId);
 
 }
