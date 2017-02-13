@@ -5,8 +5,9 @@ import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusResponse;
 import com.adeo.connector.opus.gateway.Segment;
-import com.adeo.connector.opus.model.OpusObject;
-import com.adeo.connector.opus.models.Attribute;
+import com.adeo.connector.opus.service.models.FamilySegment;
+import com.adeo.connector.opus.service.models.OpusObject;
+import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adobe.connector.services.OrchestratorService;
 import com.google.gson.Gson;
@@ -63,8 +64,8 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<Segment[]> segments,
-                                         List<Attribute> attributes, String sortAttribute, boolean ascSorting, Class<T> modelClass) {
+    public <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<FamilySegment[]> segments,
+                                         List<FamilyAttribute> attributes, String sortAttribute, boolean ascSorting, Class<T> modelClass) {
         String defaultFacets = "";
         String defaultAttributes = "";
         String filterSegments = "";
