@@ -4,6 +4,7 @@ package com.adeo.connector.opus.service;
 import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
+import com.adeo.connector.opus.gateway.SortingSet;
 import com.adeo.connector.opus.service.models.FamilySegment;
 import com.adeo.connector.opus.service.models.OpusObject;
 
@@ -351,5 +352,12 @@ public interface OpusGatewayService {
      */
     <T> ContentSet<T> getFamilies(String startFrom, String pageSize, Class<T> modelClass);
 
+    /**
+     * Get a list of Sortings for a particular family
+     * @param familyId
+     * @param modelClass
+     * @return {@link SortingSet} will all the Sorts
+     */
+    SortingSet getSortings(String familyId, Class modelClass);
 
 }

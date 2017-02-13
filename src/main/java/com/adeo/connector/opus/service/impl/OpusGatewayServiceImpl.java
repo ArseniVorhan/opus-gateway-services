@@ -321,5 +321,12 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(familiesRequest);
         return response.getResults().get(0);
     }
+    
+    @Override
+    public SortingSet getSortings(String familyId, Class modelClass) {
+    	SortingListRequest request = new SortingListRequest(modelClass, familyId);
+    	OpusResponse<SortingSet> response = (OpusResponse) orchestratorService.execute(request);
+    	return response.getResults().get(0);
+    }
 
 }
