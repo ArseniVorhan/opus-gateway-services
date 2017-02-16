@@ -1,6 +1,7 @@
 package com.adeo.connector.opus.service;
 
 
+import com.adeo.connector.opus.SearchFilterType;
 import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.Segment;
@@ -361,5 +362,27 @@ public interface OpusGatewayService {
      * @return {@link SortingSet} will all the Sorts
      */
     SortingSet getSortings(String familyId, Class modelClass);
+    
+    /**
+     * Find a list of Families based on Keyword and Filter type.
+     * OSGi configuration pattern: com.adeo.connector.opus.FamilySearchResquest:{TODO}:ContentSetProcessor
+     * 
+     * @param keyword		The keyword used to search
+     * @param filterType	Filter by "startsBy" or "contains"
+     * @param modelClass	The model class used to parse the OPUS response.
+     * @return				ContentSet instance containing all the results.
+     */
+    <T> ContentSet<T> findFamily(String keyword, SearchFilterType filterType, Class<T> modelClass);
+    
+    /**
+     * Find a list of Families based on Keyword and Filter type.
+     * OSGi configuration pattern: com.adeo.connector.opus.SeriesSearchRequest:{TODO}:ContentSetProcessor
+     * 
+     * @param keyword		The keyword used to search
+     * @param filterType	Filter by "startsBy" or "contains"
+     * @param modelClass	The model class used to parse the OPUS response.
+     * @return				ContentSet instance containing all the results.
+     */
+    <T> ContentSet<T> findSeries(String keyword, SearchFilterType filterType, Class<T> modelClass);
 
 }
