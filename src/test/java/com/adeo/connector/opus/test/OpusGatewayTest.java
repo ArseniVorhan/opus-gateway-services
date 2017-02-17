@@ -75,7 +75,7 @@ public class OpusGatewayTest {
 
         context.registerInjectActivateService(opusGateway, ImmutableMap.<String, Object>builder()
                 .put("gateway.name", "opusGateway")
-                .put("opus.url.domain", "opus-core.adobe.demo.web.opus.webadeo.net")
+                .put("opus.url.domain", "192.168.14.143:4545")
                 .put("opus.url.context", "")
                 .put("opus.url.scheme", "http")
                 .put("opus.auth.username", "wikeo")
