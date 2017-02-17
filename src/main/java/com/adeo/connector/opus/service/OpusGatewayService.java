@@ -361,4 +361,25 @@ public interface OpusGatewayService {
      */
     Ranking getSortings(String familyId);
 
+    /**
+     * Get a Series instance based on its identifier
+     * OSGi configuration pattern: com.adeo.connector.opus.SeriesRequest:/business/v2/series/{0}:ModelTypeProcessor
+     * 
+     * @param	seriesId	Unique identifier fo the Series
+     * @param	modelClass	Class used to parse the OPUS Json
+     * @return				Instance of the Series request
+     */
+    <T> T getSeries(String seriesId, Class<T> modelClass);
+    
+    /**
+     * Get List of Products in a Series.
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductInSeriesRequest:/business/v2/series/{0}/contentSet/contents?pageSize={1}&startFrom={2}&expand=links:ContentSetProcessor
+     * 
+     * @param seriesId		Series Id under which products are required
+     * @param pageSize		count of products on one page.
+     * @param startFrom		number of start page.
+     * @param modelClass	Class used to parse the OPUS Json
+     * @return				ContentSet with all Products
+     */
+    <T> ContentSet<T> getProductsInSeries(String seriesId, String pageSize, String startFrom, Class<T> modelClass);
 }

@@ -332,5 +332,19 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     private String buildContextParameters(List<String> context) {
         return context.stream().collect(Collectors.joining("&context="));
     }
+    
+    @Override
+    public <T> T getSeries(String seriesId, Class<T> modelClass) {
+    	SeriesRequest request = new SeriesRequest(modelClass, seriesId);
+    	OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
+    	return response.getResults().get(0);
+    }
+    
+    @Override
+    public <T> ContentSet<T> getProductsInSeries(String seriesId, String pageSize, String startFrom, Class<T> modelClass) {
+    	ProductsInSeriesRequest request = new ProductsInSeriesRequest(modelClass, seriesId, pageSize, startFrom);
+    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+    	return response.getResults().get(0);
+    }
 
 }
