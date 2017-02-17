@@ -1,12 +1,10 @@
 package com.adeo.connector.opus.service;
 
 
-import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.Ranking;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.models.FamilySegment;
-import com.adeo.connector.opus.service.models.OpusObject;
 
 import java.util.List;
 
@@ -182,33 +180,6 @@ public interface OpusGatewayService {
      */
     <T> T getRegion(String regionId, Class<T> modelClass);
 
-    /**
-     * Post a new FAQ to OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.PostFaqRequest:/business/v2/editorials:GsonProcessor:POST
-     *
-     * @param body JSON body of the POST request.
-     * @throws OpusException
-     */
-    void createFaq(OpusObject body) throws OpusException;
-
-    /**
-     * Update a FAQ in OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.PutFaqRequest:/business/v2/editorials/{0}?diff=true&sources=AEM:GsonProcessor:PUT
-     *
-     * @param faqId The unique identifier of the FAQ.
-     * @param body  JSON body of the PUT request.
-     * @throws OpusException
-     */
-    void updateFaq(String faqId, OpusObject body) throws OpusException;
-
-    /**
-     * Delete a FAQ in OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.DeleteFaqRequest:/business/v2/editorials/{0}:GsonProcessor:DELETE
-     *
-     * @param faqId The unique identifier of the FAQ.
-     * @throws OpusException
-     */
-    void deleteFaq(String faqId) throws OpusException;
 
     /**
      * Get a FAQ instance based on its identifier
@@ -223,34 +194,6 @@ public interface OpusGatewayService {
 
 
     /**
-     * Post a new Service to OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.PostServiceRequest:/business/v2/services:GsonProcessor:POST
-     *
-     * @param body JSON body of the POST request.
-     * @throws OpusException
-     */
-    void createService(OpusObject body) throws OpusException;
-
-    /**
-     * Update a Service in OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.PutServiceRequest:/business/v2/services/{0}?diff=true&sources=AEM:GsonProcessor:PUT
-     *
-     * @param serviceId The unique identifier of the Service.
-     * @param body      JSON body of the PUT request.
-     * @throws OpusException
-     */
-    void updateService(String serviceId, OpusObject body) throws OpusException;
-
-    /**
-     * Delete a Service in OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.DeleteServiceRequest:/business/v2/services/{0}:GsonProcessor:DELETE
-     *
-     * @param serviceId The unique identifier of the Service.
-     * @throws OpusException
-     */
-    void deleteService(String serviceId) throws OpusException;
-
-    /**
      * Get a Service instance based on its identifier
      * OSGi configuration pattern: com.adeo.connector.opus.GetServiceRequest:/business/v2/services/{0}:ModelTypeProcessor
      *
@@ -263,34 +206,6 @@ public interface OpusGatewayService {
 
 
     /**
-     * Post a new How To to OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.PostHowToRequest:/business/v2/editorials:GsonProcessor:POST
-     *
-     * @param body JSON body of the POST request.
-     * @throws OpusException
-     */
-    void createHowTo(OpusObject body) throws OpusException;
-
-    /**
-     * Update a How To in OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.PutHowToRequest:/business/v2/editorials/{0}?diff=true&sources=AEM:GsonProcessor:PUT
-     *
-     * @param serviceId The unique identifier of the How To.
-     * @param body      JSON body of the PUT request.
-     * @throws OpusException
-     */
-    void updateHowTo(String serviceId, OpusObject body) throws OpusException;
-
-    /**
-     * Delete a How To in OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.DeleteHowToRequest:/business/v2/editorials/{0}:GsonProcessor:DELETE
-     *
-     * @param serviceId The unique identifier of the How To.
-     * @throws OpusException
-     */
-    void deleteHowTo(String serviceId) throws OpusException;
-
-    /**
      * Get a How To instance based on its identifier
      * OSGi configuration pattern: com.adeo.connector.opus.GetHowToRequest:/business/v2/editorials/{0}:ModelTypeProcessor
      *
@@ -301,24 +216,6 @@ public interface OpusGatewayService {
      */
     <T> T getHowTo(String serviceId, Class<T> modelClass);
 
-
-    /**
-     * Post a new Editorial Media in OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.PostEditorialMediaRequest:/business/v2/editorialMedias:GsonProcessor:POST
-     *
-     * @param body JSON body of the POST request.
-     * @throws OpusException
-     */
-    void createEditorialMedia(OpusObject body) throws OpusException;
-
-    /**
-     * Update a new Editorial Media in OPUS
-     * OSGi configuration pattern: com.adeo.connector.opus.PutEditorialMediaRequest:/business/v2/editorialMedias/{0}?diff=true&sources=AEM:GsonProcessor:PUT
-     *
-     * @param body JSON body of the PUT request.
-     * @throws OpusException
-     */
-    void updateEditorialMedia(String editorialMediaId, OpusObject body) throws OpusException;
 
     /**
      * Get a contentSet with counts of products for each brand.
@@ -359,12 +256,10 @@ public interface OpusGatewayService {
      * @param familyId The unique identifier of the family
      * @return {@link Ranking} will all the ranking items
      */
-
-
     Ranking getSortings(String familyId);
 
     /**
-     * Get a Series instance based on its identifier
+     * Get a Serie instance based on its identifier
      * OSGi configuration pattern: com.adeo.connector.opus.SerieRequest:/business/v2/series/{0}:ModelTypeProcessor
      *
      * @param serieId    Unique identifier fo the Series
@@ -375,52 +270,65 @@ public interface OpusGatewayService {
 
     /**
      * Get a Series instance based on its identifier
-     * OSGi configuration pattern: com.adeo.connector.opus.SeriesRequest:/business/v2/series:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.SeriesRequest:/business/v2/series?startFrom={0}&pageSize={1}:ContentSetProcessor
      *
      * @param modelClass Class used to parse the OPUS Json
      * @return Instance of the Series request
      */
-    <T> ContentSet<T> getSeries(Class<T> modelClass);
+    <T> ContentSet<T> getSeries(String startFrom, String pageSize, Class<T> modelClass);
 
     /**
      * Get List of Products in a Series.
-     * OSGi configuration pattern: com.adeo.connector.opus.ProductInSeriesRequest:/business/v2/series/{0}/contentSet/contents?pageSize={1}&startFrom={2}&expand=links:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductInSeriesRequest:/business/v2/series/{0}/contentSet/contents?startFrom={1}&pageSize={2}&expand=links:ContentSetProcessor
      *
      * @param seriesId   Series Id under which products are required
-     * @param pageSize   count of products on one page.
      * @param startFrom  number of start page.
+     * @param pageSize   count of products on one page.
      * @param modelClass Class used to parse the OPUS Json
      * @return ContentSet with all Products
      */
-    <T> ContentSet<T> getProductsInSeries(String seriesId, String pageSize, String startFrom, Class<T> modelClass);
-  
-  /**
+    <T> ContentSet<T> getProductsInSeries(String seriesId, String startFrom, String pageSize, Class<T> modelClass);
+
+    /**
      * Get all Netchandising contents.
-     * OSGi configuration pattern: com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?pageSize={0}&startFrom={1}:ContentSetProcessor
-     * @param startFrom		number of start page.
-     * @param pageSize		count of products on one page.
-     * @param modelClass	The model class used to parse the OPUS response.
-     * @return				ContentSet with all Netchandising Content
+     * OSGi configuration pattern: com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?startFrom={0}&pageSize={1}:ContentSetProcessor
+     *
+     * @param startFrom  number of start page.
+     * @param pageSize   count of products on one page.
+     * @param modelClass The model class used to parse the OPUS response.
+     * @return ContentSet with all Netchandising Content
      */
-    <T> ContentSet<T> getAllNetchandising(String startFrom, String pageSize, Class modelClass);
-    
+    <T> ContentSet<T> getAllNetchandising(String startFrom, String pageSize, Class<T> modelClass);
+
     /**
      * Get Sub Contents of a Netchandising
      * OSGi configuration pattern: com.adeo.connector.opus.NetchandisingContentsRequest:/business/v2/netchandisings/{0}/nodes:ContentSetProcessor
-     * @param NetchandisingId	Id of the Netchandising
-     * @param modelClass		The model class used to parse the OPUS response.
-     * @return					ContentSet containing all the sub nodes of the Netchandising
+     *
+     * @param netchandisingId Id of the Netchandising
+     * @param modelClass      The model class used to parse the OPUS response.
+     * @return ContentSet containing all the sub nodes of the Netchandising
      */
-    <T> ContentSet<T> getNetchandisingContents(String netchandisingId, Class modelClass);
+    <T> ContentSet<T> getNetchandisingContents(String netchandisingId, Class<T> modelClass);
 
     /**
      * Get Sub Contents of a Netchandising Node
      * OSGi configuration pattern: com.adeo.connector.opus.NetchandisingNodeContentsRequest:/business/v2/netchandisingNodes/{0}/nodes:ContentSetProcessor
-     * @param netchandisingNodeId	Id of the NetchandisingNode
-     * @param modelClass			The model class used to parse the OPUS response.
-     * @return						ContentSet containing all the sub nodes of the NetchandisingNode
+     *
+     * @param netchandisingNodeId Id of the NetchandisingNode
+     * @param modelClass          The model class used to parse the OPUS response.
+     * @return ContentSet containing all the sub nodes of the NetchandisingNode
      */
-    <T> ContentSet<T> getNetchandisingNodeContents(String netchandisingNodeId, Class modelClass);
-  
+    <T> ContentSet<T> getNetchandisingNodeContents(String netchandisingNodeId, Class<T> modelClass);
+
+    /**
+     * Get a Netchandising Node
+     * OSGi configuration pattern: com.adeo.connector.opus.NetchandisingNodeRequest:/business/v2/netchandisingNodes/{0}:ModelTypeProcessor
+     *
+     * @param netchandisingNodeId Id of the NetchandisingNode
+     * @param modelClass          The model class used to parse the OPUS response.
+     * @return an instance of NetchandisingNode
+     */
+    <T> T getNetchandisingNode(String netchandisingNodeId, Class<T> modelClass);
+
 
 }

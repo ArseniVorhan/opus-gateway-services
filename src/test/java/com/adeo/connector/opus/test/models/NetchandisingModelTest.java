@@ -3,7 +3,7 @@ package com.adeo.connector.opus.test.models;
 import com.adeo.connector.opus.annotations.Field;
 import com.adeo.connector.opus.annotations.Identifier;
 
-public class AllNetchandisingModel {
+public class NetchandisingModelTest {
 	
 	@Identifier
     private String id;
