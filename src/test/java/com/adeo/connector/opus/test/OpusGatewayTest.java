@@ -10,10 +10,7 @@ import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.models.FamilySegment;
-import com.adeo.connector.opus.test.models.CriterionModelTest;
-import com.adeo.connector.opus.test.models.FamilyTest;
-import com.adeo.connector.opus.test.models.ProductModelTest;
-import com.adeo.connector.opus.test.models.RegionTest;
+import com.adeo.connector.opus.test.models.*;
 import com.adobe.connector.gateway.connection.http.HttpEndpointConnector;
 import com.adobe.connector.gateway.connection.http.OkHttpEndpointClient;
 import com.adobe.connector.services.OrchestratorService;
@@ -67,6 +64,8 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.ProductSearchBrandRequest:/business/v2/products?startFrom={0}&pageSize={1}&facet.field=%40(377%40PimFeat)&filter=%40(377%40PimFeat)%3D({2})&facet.field=inContentSet&facet.pattern=.%2AFamily&mode=mask&mask=StaticMask&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.ProductCountsBrandRequest:/business/v2/products?filter=%40(377%40PimFeat)%3A({0})&facet.field=%40(377%40PimFeat)&pageSize=0:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.FamiliesRequest:/business/v2/families?mode=mask&mask=family&startFrom={0}&pageSize={1}:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?startFrom={0}&pageSize={1}:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.NetchandisingContentsRequest:/business/v2/netchandisings/{0}/nodes:ContentSetProcessor");
 
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
@@ -75,7 +74,7 @@ public class OpusGatewayTest {
 
         context.registerInjectActivateService(opusGateway, ImmutableMap.<String, Object>builder()
                 .put("gateway.name", "opusGateway")
-                .put("opus.url.domain", "opus-core.adobe.demo.web.opus.webadeo.net")
+                .put("opus.url.domain", "192.168.14.143:4545")
                 .put("opus.url.context", "")
                 .put("opus.url.scheme", "http")
                 .put("opus.auth.username", "wikeo")
@@ -157,7 +156,7 @@ public class OpusGatewayTest {
         List<String> ids = new ArrayList<>();
         ids.add("11639491_refproduct_Product");
         ids.add("13054147_refproduct_Product");
-        List<ProductModelTest> response = opusGatewayService.getProducts(ids, ProductModelTest.class);
+        List<ProductModelTest> response = opusGatewayService.getProducts(ids, null, ProductModelTest.class);
         Assert.assertEquals(2, response.size());
     }
 
@@ -200,4 +199,17 @@ public class OpusGatewayTest {
         Assert.assertEquals(12, contentSet.getTotalCount());
         Assert.assertEquals("products for comparison", contentSet.getResults().get(0).getName());
     }
+
+    @Test
+    public void testGetAllNetchandising() {
+        ContentSet<NetchandisingModelTest> contentSet = opusGatewayService.getAllNetchandising("1", "10", NetchandisingModelTest.class);
+        Assert.assertEquals(4, contentSet.getTotalCount());
+    }
+
+    @Test
+    public void testGetNetchandisingContents() {
+        ContentSet<NetchandisingModelTest> contentSet = opusGatewayService.getNetchandisingContents("root_NmcBu_Netchandising", NetchandisingModelTest.class);
+        Assert.assertEquals(15, contentSet.getTotalCount());
+    }
+
 }
