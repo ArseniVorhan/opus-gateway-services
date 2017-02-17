@@ -34,16 +34,16 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     private OrchestratorService orchestratorService;
 
     @Override
-    public <T> T getProduct(String productId, String context, Class<T> modelClass) {
-        ProductRequest request = new ProductRequest(modelClass, productId);
+    public <T> T getProduct(String productId, List<String> context, Class<T> modelClass) {
+        ProductRequest request = new ProductRequest(modelClass, productId, buildContextParameters(context));
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> T getProduct(String productId, List<String> masks, String context, Class<T> modelClass) {
+    public <T> T getProduct(String productId, List<String> context, List<String> masks, Class<T> modelClass) {
         String masksString = masks.stream().collect(Collectors.joining(","));
-        ProductWithMasksRequest request = new ProductWithMasksRequest(modelClass, productId, masksString);
+        ProductWithMasksRequest request = new ProductWithMasksRequest(modelClass, productId, buildContextParameters(context), masksString);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
@@ -56,15 +56,15 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> List<T> getProducts(List<String> productIds, Class<T> modelClass) {
+    public <T> List<T> getProducts(List<String> productIds, List<String> context, Class<T> modelClass) {
         String query = productIds.stream().collect(Collectors.joining(" OR "));
-        ProductListRequest request = new ProductListRequest(modelClass, query);
+        ProductListRequest request = new ProductListRequest(modelClass, query, buildContextParameters(context));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0).getResults();
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<FamilySegment[]> segments,
+    public <T> ContentSet<T> getProducts(String familyId, List<String> context, int startFrom, int pageSize, List<FamilySegment[]> segments,
                                          List<FamilyAttribute> attributes, String sortAttribute, boolean ascSorting, Class<T> modelClass) {
         String defaultFacets = "";
         String defaultAttributes = "";
@@ -101,7 +101,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         if (!StringUtils.isEmpty(sortAttribute)) {
             defaultSort = new StringBuilder("@(").append(sortAttribute).append(")%20").append(ascSorting ? "asc" : "desc").toString();
         }
-        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, defaultFacets, defaultAttributes,
+        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, buildContextParameters(context), defaultFacets, defaultAttributes,
                 filter, defaultSort, Integer.toString(pageSize), Integer.toString(startFrom));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
@@ -143,8 +143,8 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> findProducts(String keyword, String context, Class<T> modelClass) {
-        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, context);
+    public <T> ContentSet<T> findProducts(String keyword, List<String> context, Class<T> modelClass) {
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, buildContextParameters(context));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
@@ -327,6 +327,10 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         RankingListRequest request = new RankingListRequest(null, familyId);
         OpusResponse<Ranking> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
+    }
+
+    private String buildContextParameters(List<String> context) {
+        return context.stream().collect(Collectors.joining("&context="));
     }
 
 }

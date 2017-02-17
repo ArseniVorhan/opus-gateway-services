@@ -157,7 +157,7 @@ public class OpusGatewayTest {
         List<String> ids = new ArrayList<>();
         ids.add("11639491_refproduct_Product");
         ids.add("13054147_refproduct_Product");
-        List<ProductModelTest> response = opusGatewayService.getProducts(ids, ProductModelTest.class);
+        List<ProductModelTest> response = opusGatewayService.getProducts(ids, null, ProductModelTest.class);
         Assert.assertEquals(2, response.size());
     }
 
