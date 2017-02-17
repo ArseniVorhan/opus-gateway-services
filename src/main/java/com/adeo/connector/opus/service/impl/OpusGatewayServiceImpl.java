@@ -342,7 +342,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
 
     @Override
     public <T> T getSerie(String serieId, Class<T> modelClass) {
-        SeriesRequest request = new SeriesRequest(modelClass, serieId);
+        SerieRequest request = new SerieRequest(modelClass, serieId);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }

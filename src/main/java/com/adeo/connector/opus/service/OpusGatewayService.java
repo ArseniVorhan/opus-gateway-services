@@ -363,7 +363,7 @@ public interface OpusGatewayService {
 
     /**
      * Get a Series instance based on its identifier
-     * OSGi configuration pattern: com.adeo.connector.opus.SeriesRequest:/business/v2/series/{0}:ModelTypeProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.SerieRequest:/business/v2/series/{0}:ModelTypeProcessor
      *
      * @param serieId    Unique identifier fo the Series
      * @param modelClass Class used to parse the OPUS Json
