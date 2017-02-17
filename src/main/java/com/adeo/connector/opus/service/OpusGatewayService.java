@@ -361,5 +361,32 @@ public interface OpusGatewayService {
      * @return {@link SortingSet} will all the Sorts
      */
     SortingSet getSortings(String familyId, Class modelClass);
+    
+    /**
+     * Get all Netchandising contents.
+     * OSGi configuration pattern: com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?pageSize={0}&startFrom={1}:ContentSetProcessor
+     * @param startFrom		number of start page.
+     * @param pageSize		count of products on one page.
+     * @param modelClass	The model class used to parse the OPUS response.
+     * @return				ContentSet with all Netchandising Content
+     */
+    <T> ContentSet<T> getAllNetchandising(String startFrom, String pageSize, Class modelClass);
+    
+    /**
+     * Get Sub Contents of a Netchandising
+     * OSGi configuration pattern: com.adeo.connector.opus.NetchandisingContentsRequest:/business/v2/netchandisings/{0}/nodes:ContentSetProcessor
+     * @param NetchandisingId	Id of the Netchandising
+     * @param modelClass		The model class used to parse the OPUS response.
+     * @return					ContentSet containing all the sub nodes of the Netchandising
+     */
+    <T> ContentSet<T> getNetchandisingContents(String netchandisingId, Class modelClass);
 
+    /**
+     * Get Sub Contents of a Netchandising Node
+     * OSGi configuration pattern: com.adeo.connector.opus.NetchandisingNodeContentsRequest:/business/v2/netchandisingNodes/{0}/nodes:ContentSetProcessor
+     * @param netchandisingNodeId	Id of the NetchandisingNode
+     * @param modelClass			The model class used to parse the OPUS response.
+     * @return						ContentSet containing all the sub nodes of the NetchandisingNode
+     */
+    <T> ContentSet<T> getNetchandisingNodeContents(String netchandisingNodeId, Class modelClass);
 }
