@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.adeo.connector.adobe</groupId>
     <artifactId>opus-gateway-services</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.8-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>OPUS Gateway Services</name>
     <description>Business method for using the OPUS Gateway</description>
@@ -260,7 +261,7 @@
         <dependency>
             <groupId>com.adeo.connector.adobe</groupId>
             <artifactId>aem-connector-opus</artifactId>
-            <version>1.16</version>
+            <version>1.18</version>
         </dependency>
     </dependencies>
 </project>

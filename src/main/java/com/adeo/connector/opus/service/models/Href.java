@@ -1,4 +1,4 @@
-package com.adeo.connector.opus.model;
+package com.adeo.connector.opus.service.models;
 
 /**
  * Created by stievena on 02/02/2017.

@@ -3,14 +3,17 @@ package com.adeo.connector.opus.test;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusGateway;
 import com.adeo.connector.opus.gateway.OpusGatewayMappings;
-import com.adeo.connector.opus.gateway.Segment;
 import com.adeo.connector.opus.gateway.processors.ContentSetProcessor;
 import com.adeo.connector.opus.gateway.processors.ModelTypeProcessor;
 import com.adeo.connector.opus.gateway.processors.SegmentationProcessor;
-import com.adeo.connector.opus.models.Attribute;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
+
 import com.adeo.connector.opus.test.models.AllNetchandisingModel;
+
+import com.adeo.connector.opus.service.models.FamilyAttribute;
+import com.adeo.connector.opus.service.models.FamilySegment;
+
 import com.adeo.connector.opus.test.models.CriterionModelTest;
 import com.adeo.connector.opus.test.models.FamilyTest;
 import com.adeo.connector.opus.test.models.ProductModelTest;
@@ -31,11 +34,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Arrays;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpusGatewayTest {
@@ -130,22 +129,22 @@ public class OpusGatewayTest {
     public void testFamilyProducts() {
         OpusGatewayService service = context.getService(OpusGatewayService.class);
 
-        List<Attribute> attributes = new ArrayList<>();
+        List<FamilyAttribute> attributes = new ArrayList<>();
         String[] values = {"SENSEA"};
-        attributes.add(new Attribute("377%40PimFeat", values));
+        attributes.add(new FamilyAttribute("377%40PimFeat", values));
 
         ContentSet<ProductModelTest> response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 20, 1, null, attributes,
                 "letterRange", false, ProductModelTest.class);
         Assert.assertEquals(189, response.getTotalCount());
 
-        List<Segment[]> segments = new ArrayList<>();
-        segments.add(new Segment[]{new Segment("d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment", true),
-                new Segment("7b072c4c-708f-407a-bcbb-331a20dd9ad2_Opus_Segment", false)});
-        segments.add(new Segment[]{new Segment("2b55f235-df07-4719-aa14-8133187900ec_Opus_Segment", false),
-                new Segment("37ebaad8-a740-43b4-b129-6d7adaba936c_Opus_Segment", false),
-                new Segment("a1b6556a-6da2-4abd-a748-be94afd6ea8c_Opus_Segment", false)});
-        segments.add(new Segment[]{new Segment("134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment", true),
-                new Segment("9609cac7-eca2-4467-a89a-c6baa4ed4984_Opus_Segment", false)});
+        List<FamilySegment[]> segments = new ArrayList<>();
+        segments.add(new FamilySegment[]{new FamilySegment("d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment", true),
+                new FamilySegment("7b072c4c-708f-407a-bcbb-331a20dd9ad2_Opus_Segment", false)});
+        segments.add(new FamilySegment[]{new FamilySegment("2b55f235-df07-4719-aa14-8133187900ec_Opus_Segment", false),
+                new FamilySegment("37ebaad8-a740-43b4-b129-6d7adaba936c_Opus_Segment", false),
+                new FamilySegment("a1b6556a-6da2-4abd-a748-be94afd6ea8c_Opus_Segment", false)});
+        segments.add(new FamilySegment[]{new FamilySegment("134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment", true),
+                new FamilySegment("9609cac7-eca2-4467-a89a-c6baa4ed4984_Opus_Segment", false)});
         response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
                 segments, null, "letterRange", false, ProductModelTest.class);
         Assert.assertEquals(1, response.getTotalCount());
@@ -153,7 +152,7 @@ public class OpusGatewayTest {
 
         attributes = new ArrayList<>();
         values = new String[]{"SENSEA", "NO NAME"};
-        attributes.add(new Attribute("377%40PimFeat", values));
+        attributes.add(new FamilyAttribute("377%40PimFeat", values));
         response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
                 segments, attributes, null, false, ProductModelTest.class);
         Assert.assertEquals(1, response.getTotalCount());
@@ -164,7 +163,7 @@ public class OpusGatewayTest {
         List<String> ids = new ArrayList<>();
         ids.add("11639491_refproduct_Product");
         ids.add("13054147_refproduct_Product");
-        List<ProductModelTest> response = opusGatewayService.getProducts(ids, ProductModelTest.class);
+        List<ProductModelTest> response = opusGatewayService.getProducts(ids, null, ProductModelTest.class);
         Assert.assertEquals(2, response.size());
     }
 

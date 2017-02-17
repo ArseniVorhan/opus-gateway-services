@@ -3,13 +3,12 @@ package com.adeo.connector.opus.service;
 
 import com.adeo.connector.opus.exception.OpusException;
 import com.adeo.connector.opus.gateway.ContentSet;
-import com.adeo.connector.opus.gateway.Segment;
-import com.adeo.connector.opus.gateway.SortingSet;
-import com.adeo.connector.opus.model.OpusObject;
-import com.adeo.connector.opus.models.Attribute;
+import com.adeo.connector.opus.gateway.Ranking;
+import com.adeo.connector.opus.service.models.FamilyAttribute;
+import com.adeo.connector.opus.service.models.FamilySegment;
+import com.adeo.connector.opus.service.models.OpusObject;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Business class to use the OPUS gateway services
@@ -18,7 +17,7 @@ public interface OpusGatewayService {
 
     /**
      * Get a product instance based on its identifier.
-     * OSGi configuration pattern: com.adeo.connector.opus.ProductRequest:/business/v2/products/{0}?mode=mask&mask=MyMask&expand=attributes:ModelTypeProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductRequest:/business/v2/products/{0}?context={1}&mode=mask&mask=MyMask&expand=attributes:ModelTypeProcessor
      *
      * @param productId  The unique identifier of the product.
      * @param context    The context to filter contextualized attributes.
@@ -26,11 +25,11 @@ public interface OpusGatewayService {
      * @param <T>        The model class expected.
      * @return a product instance.
      */
-    <T> T getProduct(String productId, String context, Class<T> modelClass);
+    <T> T getProduct(String productId, List<String> context, Class<T> modelClass);
 
     /**
      * Get a product instance based on its identifier.
-     * OSGi configuration pattern: com.adeo.connector.opus.ProductWithMasksRequest:/business/v2/products/{0}?mode=mask&mask={1}&expand=attributes:ModelTypeProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductWithMasksRequest:/business/v2/products/{0}?context={1}&mode=mask&mask={2}&expand=attributes:ModelTypeProcessor
      *
      * @param productId  The unique identifier of the product.
      * @param masks      The list of masks.
@@ -39,7 +38,7 @@ public interface OpusGatewayService {
      * @param <T>        The model class expected.
      * @return a product instance.
      */
-    <T> T getProduct(String productId, List<String> masks, String context, Class<T> modelClass);
+    <T> T getProduct(String productId, List<String> context, List<String> masks, Class<T> modelClass);
 
     /**
      * Get a family instance based on its identifier
@@ -54,33 +53,33 @@ public interface OpusGatewayService {
 
     /**
      * Get a list of product instances based on identifiers. The order of products result will match the identifiers order.
-     * OSGi configuration pattern: com.adeo.connector.opus.ProductListRequest:/business/v2/products?query={0}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductListRequest:/business/v2/products?query={0}&context={1}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
      *
      * @param productIds List of products identifiers.
      * @param modelClass The model class used to parse the OPUS response.
      * @param <T>        The model class expected.
      * @return The list of product instances.
      */
-    <T> List<T> getProducts(List<String> productIds, Class<T> modelClass);
+    <T> List<T> getProducts(List<String> productIds, List<String> context, Class<T> modelClass);
 
     /**
      * Get a list of product instances for a family. The result is based on a given segmentation.
-     * OSGi configuration pattern: com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?facet.contentSet={1}&facet.attribute=={2}&filter={3}&mode=mask&mask=MyMask&expand=attributes&sort={4}&startFrom={5}&pageSize={6}:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?context={1}&facet.contentSet={2}&facet.attribute=={3}&filter={4}&mode=mask&mask=MyMask&expand=attributes&sort={5}&startFrom={6}&pageSize={7}:ContentSetProcessor
      *
-     * @param familyId         The unique identifier of the family.
-     * @param context          The context to filter contextualized attributes.
-     * @param startFrom        The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
-     * @param pageSize         The number of products to get.
-     * @param segments         The segments used by the family.
-     * @param attributes       Names and values of attributes. Needed for filtering.
-     * @param sortAttribute    The attribute used for sorting results.
-     * @param ascSorting       The order of the sorting. If true, the order is ascending. If false, the order id descending.
-     * @param modelClass       The model class used to parse the OPUS response.
-     * @param <T>              The model class expected. The model class has to match the OSGi configuration.
+     * @param <T>           The model class expected. The model class has to match the OSGi configuration.
+     * @param familyId      The unique identifier of the family.
+     * @param context       The context to filter contextualized attributes.
+     * @param startFrom     The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
+     * @param pageSize      The number of products to get.
+     * @param segments      The segments used by the family.
+     * @param attributes    Names and values of attributes. Needed for filtering.
+     * @param sortAttribute The attribute used for sorting results.
+     * @param ascSorting    The order of the sorting. If true, the order is ascending. If false, the order id descending.
+     * @param modelClass    The model class used to parse the OPUS response.
      * @return The list of product instances.
      */
-    <T> ContentSet<T> getProducts(String familyId, String context, int startFrom, int pageSize, List<Segment[]> segments,
-                                  List<Attribute> attributes, String sortAttribute, boolean ascSorting, Class modelClass);
+    <T> ContentSet<T> getProducts(String familyId, List<String> context, int startFrom, int pageSize, List<FamilySegment[]> segments,
+                                  List<FamilyAttribute> attributes, String sortAttribute, boolean ascSorting, Class<T> modelClass);
 
     /**
      * Get a list of segments for a given family.
@@ -139,7 +138,7 @@ public interface OpusGatewayService {
 
     /**
      * Find a list of products based on a keyword.
-     * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchRequest:/business/v2/products?query=keyword%3D({0})?mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchRequest:/business/v2/products?query=keyword%3D({0})&context={1}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
      *
      * @param keyword    The keyword used for the search.
      * @param context    The context to filter contextualized attributes.
@@ -147,7 +146,7 @@ public interface OpusGatewayService {
      * @param <T>        The model class expected.
      * @return The product instances.
      */
-    <T> ContentSet<T> findProducts(String keyword, String context, Class<T> modelClass);
+    <T> ContentSet<T> findProducts(String keyword, List<String> context, Class<T> modelClass);
 
 
     /**
@@ -181,14 +180,13 @@ public interface OpusGatewayService {
      * @param <T>      The model class expected. The model class has to match the OSGi configuration.
      * @return a region instance.
      */
-    <T> T getRegion(String regionId, Class modelClass);
+    <T> T getRegion(String regionId, Class<T> modelClass);
 
     /**
      * Post a new FAQ to OPUS
      * OSGi configuration pattern: com.adeo.connector.opus.PostFaqRequest:/business/v2/editorials:GsonProcessor:POST
      *
      * @param body JSON body of the POST request.
-     * @param <T>         The model class expected. The model class has to match the OSGi configuration.
      * @throws OpusException
      */
     void createFaq(OpusObject body) throws OpusException;
@@ -322,25 +320,25 @@ public interface OpusGatewayService {
      */
     void updateEditorialMedia(String editorialMediaId, OpusObject body) throws OpusException;
 
-/**
+    /**
      * Get a contentSet with counts of products for each brand.
      * OSGi configuration pattern: com.adeo.connector.opus.ProductCountsBrandRequest:/business/v2/products?filter=%40(377%40PimFeat)%3A({0})&facet.field=%40(377%40PimFeat)&pageSize=0:ContentSetProcessor
      *
-     * @param brandNames  list of brand names.
-     * @param <T>         The model class expected. The model class has to match the OSGi configuration.
-     * @return            ContentSet with all regions
+     * @param brandNames list of brand names.
+     * @param <T>        The model class expected. The model class has to match the OSGi configuration.
+     * @return ContentSet with all regions
      */
-    <T> ContentSet<T> getProductCountsByBrand(List<String> brandNames, Class modelClass);
+    <T> ContentSet<T> getProductCountsByBrand(List<String> brandNames, Class<T> modelClass);
 
     /**
      * Get a list of products by brands.
      * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchBrandRequest:/business/v2/products?startFrom={0}&pageSize={1}&facet.field=%40(377%40PimFeat)&filter=%40(377%40PimFeat)%3D({2})&facet.field=inContentSet&facet.pattern=.%2AFamily&mode=mask&mask=StaticMask&expand=attributes:ContentSetProcessor
      *
-     * @param brandNames  list of brand names.
-     * @param <T>         The model class expected. The model class has to match the OSGi configuration.
-     * @return            ContentSet with all regions
+     * @param brandNames list of brand names.
+     * @param <T>        The model class expected. The model class has to match the OSGi configuration.
+     * @return ContentSet with all regions
      */
-    <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, List<String> brandNames, Class modelClass);
+    <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, List<String> brandNames, Class<T> modelClass);
 
     /**
      * Get a list list of all families.
@@ -350,19 +348,53 @@ public interface OpusGatewayService {
      * @param pageSize   count of products on one page.
      * @param modelClass The model class used to parse the OPUS response.
      * @param <T>        The model class expected. The model class has to match the OSGi configuration.
-     * @return           ContentSet with all families
+     * @return ContentSet with all families
      */
-    <T> ContentSet<T> getFamilies(String startFrom, String pageSize, Class modelClass);
+    <T> ContentSet<T> getFamilies(String startFrom, String pageSize, Class<T> modelClass);
 
     /**
      * Get a list of Sortings for a particular family
-     * @param familyId
-     * @param modelClass
-     * @return {@link SortingSet} will all the Sorts
+     * OSGi configuration pattern: com.adeo.connector.opus.RankingListRequest:/business/v2/families/{0}/contentSet/ranking:RankingProcessor
+     *
+     * @param familyId The unique identifier of the family
+     * @return {@link Ranking} will all the ranking items
      */
-    SortingSet getSortings(String familyId, Class modelClass);
-    
+
+
+    Ranking getSortings(String familyId);
+
     /**
+     * Get a Series instance based on its identifier
+     * OSGi configuration pattern: com.adeo.connector.opus.SerieRequest:/business/v2/series/{0}:ModelTypeProcessor
+     *
+     * @param serieId    Unique identifier fo the Series
+     * @param modelClass Class used to parse the OPUS Json
+     * @return Instance of the Series request
+     */
+    <T> T getSerie(String serieId, Class<T> modelClass);
+
+    /**
+     * Get a Series instance based on its identifier
+     * OSGi configuration pattern: com.adeo.connector.opus.SeriesRequest:/business/v2/series:ContentSetProcessor
+     *
+     * @param modelClass Class used to parse the OPUS Json
+     * @return Instance of the Series request
+     */
+    <T> ContentSet<T> getSeries(Class<T> modelClass);
+
+    /**
+     * Get List of Products in a Series.
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductInSeriesRequest:/business/v2/series/{0}/contentSet/contents?pageSize={1}&startFrom={2}&expand=links:ContentSetProcessor
+     *
+     * @param seriesId   Series Id under which products are required
+     * @param pageSize   count of products on one page.
+     * @param startFrom  number of start page.
+     * @param modelClass Class used to parse the OPUS Json
+     * @return ContentSet with all Products
+     */
+    <T> ContentSet<T> getProductsInSeries(String seriesId, String pageSize, String startFrom, Class<T> modelClass);
+  
+  /**
      * Get all Netchandising contents.
      * OSGi configuration pattern: com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?pageSize={0}&startFrom={1}:ContentSetProcessor
      * @param startFrom		number of start page.
@@ -389,4 +421,6 @@ public interface OpusGatewayService {
      * @return						ContentSet containing all the sub nodes of the NetchandisingNode
      */
     <T> ContentSet<T> getNetchandisingNodeContents(String netchandisingNodeId, Class modelClass);
+  
+
 }
