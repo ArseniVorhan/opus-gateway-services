@@ -4,7 +4,7 @@
 
     <groupId>com.adeo.connector.adobe</groupId>
     <artifactId>opus-gateway-services</artifactId>
-    <version>1.9-SNAPSHOT</version>
+    <version>1.8</version>
     <packaging>bundle</packaging>
     <name>OPUS Gateway Services</name>
     <description>Business method for using the OPUS Gateway</description>
