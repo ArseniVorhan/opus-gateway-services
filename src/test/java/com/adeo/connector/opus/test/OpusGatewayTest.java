@@ -8,8 +8,12 @@ import com.adeo.connector.opus.gateway.processors.ModelTypeProcessor;
 import com.adeo.connector.opus.gateway.processors.SegmentationProcessor;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
+
+import com.adeo.connector.opus.test.models.AllNetchandisingModel;
+
 import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.models.FamilySegment;
+
 import com.adeo.connector.opus.test.models.CriterionModelTest;
 import com.adeo.connector.opus.test.models.FamilyTest;
 import com.adeo.connector.opus.test.models.ProductModelTest;
@@ -67,6 +71,8 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.ProductSearchBrandRequest:/business/v2/products?startFrom={0}&pageSize={1}&facet.field=%40(377%40PimFeat)&filter=%40(377%40PimFeat)%3D({2})&facet.field=inContentSet&facet.pattern=.%2AFamily&mode=mask&mask=StaticMask&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.ProductCountsBrandRequest:/business/v2/products?filter=%40(377%40PimFeat)%3A({0})&facet.field=%40(377%40PimFeat)&pageSize=0:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.FamiliesRequest:/business/v2/families?mode=mask&mask=family&startFrom={0}&pageSize={1}:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?pageSize={0}&startFrom={1}:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.NetchandisingContentsRequest:/business/v2/netchandisings/{0}/nodes:ContentSetProcessor");
 
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
@@ -200,4 +206,17 @@ public class OpusGatewayTest {
         Assert.assertEquals(12, contentSet.getTotalCount());
         Assert.assertEquals("products for comparison", contentSet.getResults().get(0).getName());
     }
+    
+    @Test
+    public void testGetAllNetchandising() {
+    	ContentSet<AllNetchandisingModel> contentSet = opusGatewayService.getAllNetchandising("1", "10", AllNetchandisingModel.class);
+    	Assert.assertEquals(4, contentSet.getTotalCount());
+    }
+    
+    @Test
+    public void testGetNetchandisingContents() {
+    	ContentSet<AllNetchandisingModel> contentSet = opusGatewayService.getNetchandisingContents("root_NmcBu_Netchandising", AllNetchandisingModel.class);
+    	Assert.assertEquals(15, contentSet.getTotalCount());
+    }
+    
 }

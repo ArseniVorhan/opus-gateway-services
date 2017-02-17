@@ -353,5 +353,25 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
-
+    
+    @Override
+    public <T> ContentSet<T> getAllNetchandising(String startFrom, String pageSize, Class modelClass) {
+    	AllNetchandisingRequest request = new AllNetchandisingRequest(modelClass, startFrom, pageSize);
+    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+    	return response.getResults().get(0);
+    }
+    
+    @Override
+    public <T> ContentSet<T> getNetchandisingContents(String netchandisingId, Class modelClass) {
+    	NetchandisingContentsRequest request = new NetchandisingContentsRequest(modelClass, netchandisingId);
+    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+    	return response.getResults().get(0);
+    }
+    
+    @Override
+    public <T> ContentSet<T> getNetchandisingNodeContents(String netchandisingNodeId, Class modelClass) {
+    	NetchandisingNodeContentsRequest request = new NetchandisingNodeContentsRequest(modelClass, netchandisingNodeId);
+    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+    	return response.getResults().get(0);
+    }
 }
