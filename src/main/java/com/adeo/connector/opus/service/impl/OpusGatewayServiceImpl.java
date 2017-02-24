@@ -11,6 +11,7 @@ import com.adobe.connector.services.OrchestratorService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -103,7 +104,9 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
 
         if (attributes != null) {
             filterAttributes = attributes.stream()
-                    .map(attribute -> "@(" + attribute.getName() + ")%3A" + Stream.of(attribute.getValues()).collect(Collectors.joining("%2C")))
+                    .filter(a -> !ArrayUtils.isEmpty(a.getValues()))
+                    .map(attribute -> "@(" + attribute.getName() + ")%3A"
+                            + Stream.of(attribute.getValues()).collect(Collectors.joining("%2C")))
                     .collect(Collectors.joining("&filter="));
             defaultFacets += attributes.stream()
                     .map(FamilyAttribute::getName)
@@ -115,7 +118,10 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
                 .collect(Collectors.joining(" AND "));
 
         if (!StringUtils.isEmpty(sortAttribute)) {
-            defaultSort = new StringBuilder("@(").append(sortAttribute).append(")%20").append(ascSorting ? "asc" : "desc").toString();
+            defaultSort = new StringBuilder("@(")
+                    .append(sortAttribute)
+                    .append(")%20")
+                    .append(ascSorting ? "asc" : "desc").toString();
         }
         FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, buildContextParameters(context), defaultFacets, defaultAttributes,
                 filter, defaultSort, Integer.toString(startFrom), Integer.toString(pageSize));
