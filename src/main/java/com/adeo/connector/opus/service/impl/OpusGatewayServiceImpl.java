@@ -275,4 +275,20 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
+
+    
+    @Override
+    public <T> ContentSet<T> findFamily(String keyword, SearchFilterType filterType, Class<T> modelClass) {
+    	FamilySearchResquest request = new FamilySearchResquest(modelClass, keyword, filterType.toString());
+    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
+    
+    @Override
+    public <T> ContentSet<T> findSeries(String keyword, SearchFilterType filterType, Class<T> modelClass) {
+    	SeriesSearchRequest request = new SeriesSearchRequest(modelClass, keyword, filterType.toString());
+    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+        return response.getResults().get(0);
+    }
+
 }
