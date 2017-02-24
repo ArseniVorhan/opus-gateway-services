@@ -168,8 +168,8 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> findProducts(String keyword, List<String> context, Class<T> modelClass) {
-        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, buildContextParameters(context));
+    public <T> ContentSet<T> findProducts(String keyword, List<String> context, int startFrom, int pageSize, Class<T> modelClass) {
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, buildContextParameters(context), String.valueOf(startFrom), String.valueOf(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
                 ? response.getResults().get(0) : EMPTY_CONTENT_SET;
