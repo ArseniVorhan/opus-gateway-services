@@ -87,15 +87,14 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         String defaultSort = "";
 
         if (segments != null) {
-            StringBuilder contentSet = new StringBuilder("inContentSet:");
-            contentSet.append(segments.stream()
+            final String segmentsQuery = segments.stream()
                     .map(s -> Stream.of(s)
                             .filter(FamilySegment::isEnabled)
                             .map(FamilySegment::getId)
                             .collect(Collectors.joining(" OR ", "(", ")")))
                     .filter(s -> !s.equals("()"))
-                    .collect(Collectors.joining(" AND ")));
-            filterSegments = contentSet.toString();
+                    .collect(Collectors.joining(" AND "));
+            filterSegments = segmentsQuery.isEmpty() ? "" : "inContentSet:" + segmentsQuery;
             defaultFacets = segments.stream()
                     .flatMap(Stream::of)
                     .map(FamilySegment::getId)
