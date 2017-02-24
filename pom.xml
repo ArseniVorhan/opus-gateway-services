@@ -4,7 +4,7 @@
 
     <groupId>com.adeo.connector.adobe</groupId>
     <artifactId>opus-gateway-services</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.9-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>OPUS Gateway Services</name>
     <description>Business method for using the OPUS Gateway</description>
@@ -252,9 +252,15 @@
             <version>1.9.2</version>
         </dependency>
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.adeo.connector.adobe</groupId>
             <artifactId>aem-connector-opus</artifactId>
-            <version>1.12</version>
+            <version>1.18</version>
         </dependency>
     </dependencies>
 </project>
