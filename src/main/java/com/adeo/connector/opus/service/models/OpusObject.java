@@ -1,4 +1,4 @@
-package com.adeo.connector.opus.model;
+package com.adeo.connector.opus.service.models;
 
 import java.util.ArrayList;
 import java.util.List;

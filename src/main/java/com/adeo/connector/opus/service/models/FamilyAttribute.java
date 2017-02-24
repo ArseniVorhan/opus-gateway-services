@@ -1,14 +1,14 @@
-package com.adeo.connector.opus.models;
+package com.adeo.connector.opus.service.models;
 
 /**
  * Created by arseni.vorhan on 06.02.2017.
  */
-public class Attribute {
+public class FamilyAttribute {
 
     private String name;
     private String[] values;
 
-    public Attribute(String name, String[] values) {
+    public FamilyAttribute(String name, String[] values) {
         this.name = name;
         this.values = values;
     }
