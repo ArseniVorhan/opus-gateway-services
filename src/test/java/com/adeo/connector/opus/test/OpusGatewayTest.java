@@ -3,8 +3,10 @@ package com.adeo.connector.opus.test;
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusGateway;
 import com.adeo.connector.opus.gateway.OpusGatewayMappings;
+import com.adeo.connector.opus.gateway.Ranking;
 import com.adeo.connector.opus.gateway.processors.ContentSetProcessor;
 import com.adeo.connector.opus.gateway.processors.ModelTypeProcessor;
+import com.adeo.connector.opus.gateway.processors.RankingProcessor;
 import com.adeo.connector.opus.gateway.processors.SegmentationProcessor;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
@@ -66,7 +68,8 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.FamiliesRequest:/business/v2/families?mode=mask&mask=family&startFrom={0}&pageSize={1}:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?startFrom={0}&pageSize={1}:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.NetchandisingContentsRequest:/business/v2/netchandisings/{0}/nodes:ContentSetProcessor");
-
+        mappings.add("com.adeo.connector.opus.RankingListRequest:/business/v2/families/{0}/contentSet/ranking:RankingProcessor");
+        
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
         context.registerInjectActivateService(new HttpEndpointConnector());
@@ -89,7 +92,8 @@ public class OpusGatewayTest {
         context.registerInjectActivateService(new ModelTypeProcessor());
         context.registerInjectActivateService(new ContentSetProcessor());
         context.registerInjectActivateService(new SegmentationProcessor());
-
+        context.registerInjectActivateService(new RankingProcessor());
+        
         context.registerInjectActivateService(new ExecutionPlanFactoryImpl(), ImmutableMap.<String, Object>builder()
                 .put("gateway.name", "opusGateway")
                 .put("request", "com.adeo.connector.opus.gateway.OpusRequest")
@@ -212,4 +216,10 @@ public class OpusGatewayTest {
         Assert.assertEquals(15, contentSet.getTotalCount());
     }
 
+    @Test
+    public void testGetSortings() {
+    	Ranking ranking = opusGatewayService.getSortings("cd1949e2-56a3-4595-a663-ae3f4b3353f9_Opus_Family");
+    	Assert.assertEquals(2, ranking.getItems().size());
+    }
+    
 }
