@@ -15,7 +15,7 @@ public class IntervalValues extends FamilyAttributeValue {
     @Override
     public String formatValues() {
         if (this.values.length == 2) {
-            return Stream.of(this.values).collect(Collectors.joining(" TO ", "[", "]"));
+            return Stream.of(this.values).collect(Collectors.joining("%20TO%20", "[", "]"));
         }
         return "";
     }

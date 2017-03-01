@@ -137,7 +137,7 @@ public interface OpusGatewayService {
 
     /**
      * Find a list of products based on a keyword.
-     * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchRequest:/business/v2/products?query=keyword%3A({0}*)&facet.field=inContentSet&facet.pattern=.*Family&context={1}&startFrom={2}&pageSize={3}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchRequest:/business/v2/products?query=keyword%3A({0})&facet.field=inContentSet&facet.pattern=.*Family&context={1}&startFrom={2}&pageSize={3}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
      *
      * @param keyword    The keyword used for the search.
      * @param contexts   The context to filter contextualized attributes.
@@ -152,34 +152,40 @@ public interface OpusGatewayService {
 
     /**
      * Find a list of services based on a keyword.
-     * OSGi configuration pattern: com.adeo.connector.opus.ServiceSearchRequest:/business/v2/services?query=keyword%3A({0})?mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.ServiceSearchRequest:/business/v2/services?query=keyword%3A({0})&startFrom={1}&pageSize={2}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
      *
      * @param keyword    The keyword used for the search.
+     * @param startFrom  The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
+     * @param pageSize   The number of products to get.
      * @param modelClass The model class used to parse the OPUS response.
      * @param <T>        The model class expected.
      * @return The product instances.
      */
-    <T> ContentSet<T> findServices(String keyword, Class<T> modelClass);
+    <T> ContentSet<T> findServices(String keyword, int startFrom, int pageSize, Class<T> modelClass);
 
     /**
      * Find a list of Families based on keyword.
-     * OSGi configuration pattern: com.adeo.connector.opus.FamilySearchResquest:/business/v2/families?query=keyword%3A({0})?mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.FamilySearchResquest:/business/v2/families?query=keyword%3A({0})&startFrom={1}&pageSize={2}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
      *
      * @param keyword    The keyword used to search
+     * @param startFrom  The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
+     * @param pageSize   The number of products to get.
      * @param modelClass The model class used to parse the OPUS response.
      * @return ContentSet instance containing all the results.
      */
-    <T> ContentSet<T> findFamily(String keyword, Class<T> modelClass);
+    <T> ContentSet<T> findFamily(String keyword, int startFrom, int pageSize, Class<T> modelClass);
 
     /**
      * Find a list of Families based on keyword.
-     * OSGi configuration pattern: com.adeo.connector.opus.SeriesSearchRequest:/business/v2/series?query=keyword%3A({0})?mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.SeriesSearchRequest:/business/v2/series?query=keyword%3A({0})&startFrom={1}&pageSize={2}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
      *
      * @param keyword    The keyword used to search
+     * @param startFrom  The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
+     * @param pageSize   The number of products to get.
      * @param modelClass The model class used to parse the OPUS response.
      * @return ContentSet instance containing all the results.
      */
-    <T> ContentSet<T> findSeries(String keyword, Class<T> modelClass);
+    <T> ContentSet<T> findSeries(String keyword, int startFrom, int pageSize, Class<T> modelClass);
 
     /**
      * Get a list list of all regions.

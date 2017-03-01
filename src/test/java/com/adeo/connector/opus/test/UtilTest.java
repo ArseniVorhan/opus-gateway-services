@@ -27,7 +27,7 @@ public class UtilTest {
                 new FamilySegment("9609cac7-eca2-4467-a89a-c6baa4ed4984_Opus_Segment", false)});
         String query = QueryBuilder.buildSegmentsFilterParam(segments);
         System.out.print(query);
-        Assert.assertEquals("inContentSet:(d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment OR 7b072c4c-708f-407a-bcbb-331a20dd9ad2_Opus_Segment) AND inContentSet:(134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment)", query);
+        Assert.assertEquals("inContentSet:(d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment%20OR%207b072c4c-708f-407a-bcbb-331a20dd9ad2_Opus_Segment)%20AND%20inContentSet:(134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment)", query);
         query = QueryBuilder.buildSegmentsFilterParam(null);
         System.out.print(query);
         Assert.assertEquals("", query);
@@ -59,7 +59,7 @@ public class UtilTest {
         attributes.add(new FamilyAttribute("price", new FixedValues("back")));
         String query = QueryBuilder.buildAttributesFilterParam(attributes);
         System.out.print(query);
-        Assert.assertEquals("@(color):(black OR white) AND @(size):[1 TO 10] AND @(price):(back)", query);
+        Assert.assertEquals("@(color):(black%20OR%20white)%20AND%20@(size):[1%20TO%2010]%20AND%20@(price):(back)", query);
         query = QueryBuilder.buildAttributesFilterParam(null);
         System.out.print(query);
         Assert.assertEquals("", query);
@@ -124,15 +124,15 @@ public class UtilTest {
 
         String query = QueryBuilder.buildFilterParam(segments, attributes);
         System.out.print(query);
-        Assert.assertEquals("inContentSet:(d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment OR 7b072c4c-708f-407a-bcbb-331a20dd9ad2_Opus_Segment) AND inContentSet:(134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment) AND @(color):(black OR white) AND @(size):[1 TO 10] AND @(price):(back)", query);
+        Assert.assertEquals("inContentSet:(d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment%20OR%207b072c4c-708f-407a-bcbb-331a20dd9ad2_Opus_Segment)%20AND%20inContentSet:(134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment)%20AND%20@(color):(black%20OR%20white)%20AND%20@(size):[1%20TO%2010]%20AND%20@(price):(back)", query);
 
         query = QueryBuilder.buildFilterParam(null, attributes);
         System.out.print(query);
-        Assert.assertEquals("@(color):(black OR white) AND @(size):[1 TO 10] AND @(price):(back)", query);
+        Assert.assertEquals("@(color):(black%20OR%20white)%20AND%20@(size):[1%20TO%2010]%20AND%20@(price):(back)", query);
 
         query = QueryBuilder.buildFilterParam(segments, null);
         System.out.print(query);
-        Assert.assertEquals("inContentSet:(d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment OR 7b072c4c-708f-407a-bcbb-331a20dd9ad2_Opus_Segment) AND inContentSet:(134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment)", query);
+        Assert.assertEquals("inContentSet:(d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment%20OR%207b072c4c-708f-407a-bcbb-331a20dd9ad2_Opus_Segment)%20AND%20inContentSet:(134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment)", query);
 
         query = QueryBuilder.buildFilterParam(null, null);
         System.out.print(query);

@@ -21,9 +21,9 @@ public class QueryBuilder {
                 .map(s -> Stream.of(s)
                         .filter(FamilySegment::isEnabled)
                         .map(FamilySegment::getId)
-                        .collect(Collectors.joining(" OR ", "inContentSet:(", ")")))
+                        .collect(Collectors.joining("%20OR%20", "inContentSet:(", ")")))
                 .filter(s -> !s.equals("inContentSet:()"))
-                .collect(Collectors.joining(" AND "));
+                .collect(Collectors.joining("%20AND%20"));
     }
 
     public static String buildSegmentsFacetParam(List<FamilySegment[]> segments) {
@@ -34,7 +34,7 @@ public class QueryBuilder {
     }
 
     public static String buildAttributesFilterParam(List<FamilyAttribute> attributes) {
-        return Optional.ofNullable(attributes).orElse(Collections.emptyList()).stream().map(attr -> "@(" + attr.getName() + "):" + attr.getValues().formatValues()).collect(Collectors.joining(" AND "));
+        return Optional.ofNullable(attributes).orElse(Collections.emptyList()).stream().map(attr -> "@(" + attr.getName() + "):" + attr.getValues().formatValues()).collect(Collectors.joining("%20AND%20"));
     }
 
     public static String buildAttributesFacetParam(List<FamilyAttribute> attributes) {
@@ -54,6 +54,6 @@ public class QueryBuilder {
     }
 
     public static String buildFilterParam(List<FamilySegment[]> segments, List<FamilyAttribute> attributes) {
-        return Stream.of(buildSegmentsFilterParam(segments), buildAttributesFilterParam(attributes)).filter(StringUtils::isNotBlank).collect(Collectors.joining(" AND "));
+        return Stream.of(buildSegmentsFilterParam(segments), buildAttributesFilterParam(attributes)).filter(StringUtils::isNotBlank).collect(Collectors.joining("%20AND%20"));
     }
 }

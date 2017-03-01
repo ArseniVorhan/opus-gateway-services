@@ -47,7 +47,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
 
     @Override
     public <T> T getProduct(String productId, List<Context> contexts, List<String> masks, Class<T> modelClass) {
-        String masksString = masks.stream().collect(Collectors.joining(","));
+        String masksString = masks.stream().collect(Collectors.joining("%2C"));
         ProductWithMasksRequest request = new ProductWithMasksRequest(modelClass, productId, QueryBuilder.buildContextsParam(contexts), masksString);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
@@ -66,7 +66,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
 
     @Override
     public <T> List<T> getProducts(List<String> productIds, List<Context> contexts, Class<T> modelClass) {
-        String query = productIds.stream().collect(Collectors.joining(" OR "));
+        String query = productIds.stream().collect(Collectors.joining("%20OR%20"));
         ProductListRequest request = new ProductListRequest(modelClass, query, QueryBuilder.buildContextsParam(contexts));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
@@ -136,25 +136,27 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> findServices(String keyword, Class<T> modelClass) {
-        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword);
+    public <T> ContentSet<T> findServices(String keyword, int startFrom, int pageSize, Class<T> modelClass) {
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, String.valueOf(startFrom), String.valueOf(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
                 ? response.getResults().get(0) : EMPTY_CONTENT_SET;
     }
 
     @Override
-    public <T> ContentSet<T> findFamily(String keyword, Class<T> modelClass) {
-        FamilySearchResquest request = new FamilySearchResquest(modelClass, keyword);
+    public <T> ContentSet<T> findFamily(String keyword, int startFrom, int pageSize, Class<T> modelClass) {
+        FamilySearchResquest request = new FamilySearchResquest(modelClass, keyword, String.valueOf(startFrom), String.valueOf(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response.getResults().get(0);
+        return response != null && CollectionUtils.isNotEmpty(response.getResults())
+                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
     }
 
     @Override
-    public <T> ContentSet<T> findSeries(String keyword, Class<T> modelClass) {
-        SeriesSearchRequest request = new SeriesSearchRequest(modelClass, keyword);
+    public <T> ContentSet<T> findSeries(String keyword, int startFrom, int pageSize, Class<T> modelClass) {
+        SeriesSearchRequest request = new SeriesSearchRequest(modelClass, keyword, String.valueOf(startFrom), String.valueOf(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response.getResults().get(0);
+        return response != null && CollectionUtils.isNotEmpty(response.getResults())
+                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
     }
 
     @Override

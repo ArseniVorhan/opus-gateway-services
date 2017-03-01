@@ -14,6 +14,6 @@ public class FixedValues extends FamilyAttributeValue {
 
     @Override
     public String formatValues() {
-        return Stream.of(this.values).collect(Collectors.joining(" OR ", "(", ")"));
+        return Stream.of(this.values).collect(Collectors.joining("%20OR%20", "(", ")"));
     }
 }
