@@ -139,7 +139,7 @@ public interface OpusGatewayService {
 
     /**
      * Find a list of products based on a keyword.
-     * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchRequest:/business/v2/products?query=keyword%3D({0})&context={1}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchRequest:/business/v2/products?query=keyword%3A({0}*)&facet.field=inContentSet&facet.pattern=.*Family&context={1}&startFrom={2}&pageSize={3}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
      *
      * @param keyword    The keyword used for the search.
      * @param context    The context to filter contextualized attributes.
@@ -147,7 +147,7 @@ public interface OpusGatewayService {
      * @param <T>        The model class expected.
      * @return The product instances.
      */
-    <T> ContentSet<T> findProducts(String keyword, List<String> context, Class<T> modelClass);
+    <T> ContentSet<T> findProducts(String keyword, List<String> context, int startFrom, int pageSize, Class<T> modelClass);
 
 
     /**
