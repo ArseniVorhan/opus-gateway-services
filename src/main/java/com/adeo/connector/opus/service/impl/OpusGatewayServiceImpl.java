@@ -5,19 +5,20 @@ import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusResponse;
 import com.adeo.connector.opus.gateway.Ranking;
 import com.adeo.connector.opus.service.OpusGatewayService;
+import com.adeo.connector.opus.service.models.Context;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.models.FamilySegment;
+import com.adeo.connector.opus.service.models.FamilySort;
+import com.adeo.connector.opus.utils.QueryBuilder;
 import com.adobe.connector.services.OrchestratorService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by stievena on 28/10/16.
@@ -32,16 +33,16 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     private OrchestratorService orchestratorService;
 
     @Override
-    public <T> T getProduct(String productId, List<String> context, Class<T> modelClass) {
-        ProductRequest request = new ProductRequest(modelClass, productId, buildContextParameters(context));
+    public <T> T getProduct(String productId, List<Context> contexts, Class<T> modelClass) {
+        ProductRequest request = new ProductRequest(modelClass, productId, QueryBuilder.buildContextsParam(contexts));
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
 
     @Override
-    public <T> T getProduct(String productId, List<String> context, List<String> masks, Class<T> modelClass) {
+    public <T> T getProduct(String productId, List<Context> contexts, List<String> masks, Class<T> modelClass) {
         String masksString = masks.stream().collect(Collectors.joining(","));
-        ProductWithMasksRequest request = new ProductWithMasksRequest(modelClass, productId, buildContextParameters(context), masksString);
+        ProductWithMasksRequest request = new ProductWithMasksRequest(modelClass, productId, QueryBuilder.buildContextsParam(contexts), masksString);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
@@ -54,53 +55,18 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> List<T> getProducts(List<String> productIds, List<String> context, Class<T> modelClass) {
+    public <T> List<T> getProducts(List<String> productIds, List<Context> contexts, Class<T> modelClass) {
         String query = productIds.stream().collect(Collectors.joining(" OR "));
-        ProductListRequest request = new ProductListRequest(modelClass, query, buildContextParameters(context));
+        ProductListRequest request = new ProductListRequest(modelClass, query, QueryBuilder.buildContextsParam(contexts));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0).getResults();
     }
 
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, List<String> context, int startFrom, int pageSize, List<FamilySegment[]> segments,
-                                         List<FamilyAttribute> attributes, String sortAttribute, boolean ascSorting, Class<T> modelClass) {
-        String defaultFacets = "";
-        String defaultAttributes = "";
-        String filterSegments = "";
-        String filterAttributes = "";
-        String defaultSort = "";
-
-        if (segments != null) {
-            StringBuilder contentSet = new StringBuilder("inContentSet:");
-            contentSet.append(segments.stream()
-                    .map(s -> Stream.of(s)
-                            .filter(FamilySegment::isEnabled)
-                            .map(FamilySegment::getId)
-                            .collect(Collectors.joining(" OR ", "(", ")")))
-                    .filter(s -> !s.equals("()"))
-                    .collect(Collectors.joining(" AND ")));
-            filterSegments = contentSet.toString();
-            defaultFacets = segments.stream()
-                    .flatMap(Stream::of)
-                    .map(FamilySegment::getId)
-                    .collect(Collectors.joining("%2C"));
-        }
-
-        if (attributes != null) {
-            filterAttributes = attributes.stream()
-                    .map(attribute -> "@(" + attribute.getName() + ")%3A" + Stream.of(attribute.getValues()).collect(Collectors.joining("%2C")))
-                    .collect(Collectors.joining("&filter="));
-        }
-
-        String filter = Stream.of(filterAttributes, filterSegments)
-                .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.joining(" AND "));
-
-        if (!StringUtils.isEmpty(sortAttribute)) {
-            defaultSort = new StringBuilder("@(").append(sortAttribute).append(")%20").append(ascSorting ? "asc" : "desc").toString();
-        }
-        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, buildContextParameters(context), defaultFacets, defaultAttributes,
-                filter, defaultSort, Integer.toString(startFrom), Integer.toString(pageSize));
+    public <T> ContentSet<T> getProducts(String familyId, List<Context> context, int startFrom, int pageSize, List<FamilySegment[]> segments,
+                                         List<FamilyAttribute> attributes, List<FamilySort> sorts, Class<T> modelClass) {
+        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, QueryBuilder.buildContextsParam(context), QueryBuilder.buildSegmentsFacetParam(segments), QueryBuilder.buildAttributesFacetParam(attributes),
+                QueryBuilder.buildFilterParam(segments, attributes), QueryBuilder.buildSortsParam(sorts), Integer.toString(startFrom), Integer.toString(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
@@ -141,8 +107,8 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> findProducts(String keyword, List<String> context, Class<T> modelClass) {
-        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, buildContextParameters(context));
+    public <T> ContentSet<T> findProducts(String keyword, List<Context> contexts, Class<T> modelClass) {
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, QueryBuilder.buildContextsParam(contexts));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response.getResults().get(0);
     }
@@ -231,14 +197,10 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public Ranking getSortings(String familyId) {
+    public List<Ranking> getSortings(String familyId) {
         RankingListRequest request = new RankingListRequest(null, familyId);
         OpusResponse<Ranking> response = (OpusResponse) orchestratorService.execute(request);
-        return response.getResults().get(0);
-    }
-
-    private String buildContextParameters(List<String> context) {
-        return context.stream().collect(Collectors.joining("&context="));
+        return response.getResults();
     }
 
     @Override

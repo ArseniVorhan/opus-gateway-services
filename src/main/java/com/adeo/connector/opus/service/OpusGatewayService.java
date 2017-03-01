@@ -3,8 +3,10 @@ package com.adeo.connector.opus.service;
 
 import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.Ranking;
+import com.adeo.connector.opus.service.models.Context;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.models.FamilySegment;
+import com.adeo.connector.opus.service.models.FamilySort;
 
 import java.util.List;
 
@@ -18,12 +20,12 @@ public interface OpusGatewayService {
      * OSGi configuration pattern: com.adeo.connector.opus.ProductRequest:/business/v2/products/{0}?context={1}&mode=mask&mask=MyMask&expand=attributes:ModelTypeProcessor
      *
      * @param productId  The unique identifier of the product.
-     * @param context    The context to filter contextualized attributes.
+     * @param contexts   The context to filter contextualized attributes.
      * @param modelClass The model class used to parse the OPUS response.
      * @param <T>        The model class expected.
      * @return a product instance.
      */
-    <T> T getProduct(String productId, List<String> context, Class<T> modelClass);
+    <T> T getProduct(String productId, List<Context> contexts, Class<T> modelClass);
 
     /**
      * Get a product instance based on its identifier.
@@ -31,12 +33,12 @@ public interface OpusGatewayService {
      *
      * @param productId  The unique identifier of the product.
      * @param masks      The list of masks.
-     * @param context    The context to filter contextualized attributes.
+     * @param contexts   The context to filter contextualized attributes.
      * @param modelClass The model class used to parse the OPUS response.
      * @param <T>        The model class expected.
      * @return a product instance.
      */
-    <T> T getProduct(String productId, List<String> context, List<String> masks, Class<T> modelClass);
+    <T> T getProduct(String productId, List<Context> contexts, List<String> masks, Class<T> modelClass);
 
     /**
      * Get a family instance based on its identifier
@@ -58,26 +60,25 @@ public interface OpusGatewayService {
      * @param <T>        The model class expected.
      * @return The list of product instances.
      */
-    <T> List<T> getProducts(List<String> productIds, List<String> context, Class<T> modelClass);
+    <T> List<T> getProducts(List<String> productIds, List<Context> contexts, Class<T> modelClass);
 
     /**
      * Get a list of product instances for a family. The result is based on a given segmentation.
-     * OSGi configuration pattern: com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?context={1}&facet.contentSet={2}&facet.attribute=={3}&filter={4}&mode=mask&mask=MyMask&expand=attributes&sort={5}&startFrom={6}&pageSize={7}:ContentSetProcessor
+     * OSGi configuration pattern: com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?context={1}&facet.contentSet={2}&facet.attribute={3}&filter={4}&mode=mask&mask=MyMask&expand=attributes&sort={5}&startFrom={6}&pageSize={7}:ContentSetProcessor
      *
-     * @param <T>           The model class expected. The model class has to match the OSGi configuration.
-     * @param familyId      The unique identifier of the family.
-     * @param context       The context to filter contextualized attributes.
-     * @param startFrom     The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
-     * @param pageSize      The number of products to get.
-     * @param segments      The segments used by the family.
-     * @param attributes    Names and values of attributes. Needed for filtering.
-     * @param sortAttribute The attribute used for sorting results.
-     * @param ascSorting    The order of the sorting. If true, the order is ascending. If false, the order id descending.
-     * @param modelClass    The model class used to parse the OPUS response.
+     * @param <T>        The model class expected. The model class has to match the OSGi configuration.
+     * @param familyId   The unique identifier of the family.
+     * @param contexts   The context to filter contextualized attributes.
+     * @param startFrom  The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
+     * @param pageSize   The number of products to get.
+     * @param segments   The segments used by the family.
+     * @param attributes Names and values of attributes. Needed for filtering.
+     * @param sorts      The sorts used for sorting results.
+     * @param modelClass The model class used to parse the OPUS response.
      * @return The list of product instances.
      */
-    <T> ContentSet<T> getProducts(String familyId, List<String> context, int startFrom, int pageSize, List<FamilySegment[]> segments,
-                                  List<FamilyAttribute> attributes, String sortAttribute, boolean ascSorting, Class<T> modelClass);
+    <T> ContentSet<T> getProducts(String familyId, List<Context> contexts, int startFrom, int pageSize, List<FamilySegment[]> segments,
+                                  List<FamilyAttribute> attributes, List<FamilySort> sorts, Class<T> modelClass);
 
     /**
      * Get a list of segments for a given family.
@@ -139,12 +140,12 @@ public interface OpusGatewayService {
      * OSGi configuration pattern: com.adeo.connector.opus.ProductSearchRequest:/business/v2/products?query=keyword%3A({0})&context={1}&mode=mask&mask=MyMask&expand=attributes:ContentSetProcessor
      *
      * @param keyword    The keyword used for the search.
-     * @param context    The context to filter contextualized attributes.
+     * @param contexts   The context to filter contextualized attributes.
      * @param modelClass The model class used to parse the OPUS response.
      * @param <T>        The model class expected.
      * @return The product instances.
      */
-    <T> ContentSet<T> findProducts(String keyword, List<String> context, Class<T> modelClass);
+    <T> ContentSet<T> findProducts(String keyword, List<Context> contexts, Class<T> modelClass);
 
 
     /**
@@ -276,7 +277,7 @@ public interface OpusGatewayService {
      * @param familyId The unique identifier of the family
      * @return {@link Ranking} will all the ranking items
      */
-    Ranking getSortings(String familyId);
+    List<Ranking> getSortings(String familyId);
 
     /**
      * Get a Serie instance based on its identifier

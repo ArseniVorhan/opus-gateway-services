@@ -12,6 +12,7 @@ import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.models.FamilySegment;
+import com.adeo.connector.opus.service.models.FixedValues;
 import com.adeo.connector.opus.test.models.*;
 import com.adobe.connector.gateway.connection.http.HttpEndpointConnector;
 import com.adobe.connector.gateway.connection.http.OkHttpEndpointClient;
@@ -58,7 +59,7 @@ public class OpusGatewayTest {
         //testSegments
         mappings.add("com.adeo.connector.opus.SegmentationRequest:/business/v2/families/{0}?expand=subContents(depth%3A2)&mode=mask&mask=WebtopList:SegmentationProcessor");
         //testFamilyProducts
-        mappings.add("com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?facet.contentSet={1}&facet.attribute={2}&filter={3}&mode=mask&mask=StaticMask,Characteristcs&expand=attributes&sort={4}&startFrom={5}&pageSize={6}:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.FamilyProductsRequest:/business/v2/families/{0}/contentSet/contents?context={1}&facet.contentSet={2}&facet.attribute={3}&filter={4}&mode=mask&mask=StaticMask,Characteristcs&expand=attributes&sort={5}&startFrom={6}&pageSize={7}:ContentSetProcessor");
         //testProducts
         mappings.add("com.adeo.connector.opus.ProductListRequest:/business/v2/products?query={0}&mode=mask&mask=StaticMask,Characteristcs&expand=attributes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RegionsRequest:/business/v2/Region?startFrom={0}&pageSize={1}&mode=mask&mask=RegionMask&expand=attributes:ContentSetProcessor");
@@ -69,7 +70,7 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?startFrom={0}&pageSize={1}:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.NetchandisingContentsRequest:/business/v2/netchandisings/{0}/nodes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RankingListRequest:/business/v2/families/{0}/contentSet/ranking:RankingProcessor");
-        
+
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
         context.registerInjectActivateService(new HttpEndpointConnector());
@@ -77,7 +78,7 @@ public class OpusGatewayTest {
 
         context.registerInjectActivateService(opusGateway, ImmutableMap.<String, Object>builder()
                 .put("gateway.name", "opusGateway")
-                .put("opus.url.domain", "192.168.14.143:4545")
+                .put("opus.url.domain", "192.168.14.154:4545")
                 .put("opus.url.context", "")
                 .put("opus.url.scheme", "http")
                 .put("opus.auth.username", "wikeo")
@@ -93,7 +94,7 @@ public class OpusGatewayTest {
         context.registerInjectActivateService(new ContentSetProcessor());
         context.registerInjectActivateService(new SegmentationProcessor());
         context.registerInjectActivateService(new RankingProcessor());
-        
+
         context.registerInjectActivateService(new ExecutionPlanFactoryImpl(), ImmutableMap.<String, Object>builder()
                 .put("gateway.name", "opusGateway")
                 .put("request", "com.adeo.connector.opus.gateway.OpusRequest")
@@ -127,11 +128,10 @@ public class OpusGatewayTest {
         OpusGatewayService service = context.getService(OpusGatewayService.class);
 
         List<FamilyAttribute> attributes = new ArrayList<>();
-        String[] values = {"SENSEA"};
-        attributes.add(new FamilyAttribute("377%40PimFeat", values));
+        attributes.add(new FamilyAttribute("377%40PimFeat", new FixedValues("SENSEA")));
 
         ContentSet<ProductModelTest> response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 20, 1, null, attributes,
-                "letterRange", false, ProductModelTest.class);
+                null, ProductModelTest.class);
         Assert.assertEquals(189, response.getTotalCount());
 
         List<FamilySegment[]> segments = new ArrayList<>();
@@ -143,16 +143,15 @@ public class OpusGatewayTest {
         segments.add(new FamilySegment[]{new FamilySegment("134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment", true),
                 new FamilySegment("9609cac7-eca2-4467-a89a-c6baa4ed4984_Opus_Segment", false)});
         response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
-                segments, null, "letterRange", false, ProductModelTest.class);
-        Assert.assertEquals(1, response.getTotalCount());
+                segments, null, null, ProductModelTest.class);
+        Assert.assertEquals(0, response.getTotalCount());
 
 
         attributes = new ArrayList<>();
-        values = new String[]{"SENSEA", "NO NAME"};
-        attributes.add(new FamilyAttribute("377%40PimFeat", values));
+        attributes.add(new FamilyAttribute("377%40PimFeat", new FixedValues("SENSEA", "NO NAME")));
         response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
-                segments, attributes, null, false, ProductModelTest.class);
-        Assert.assertEquals(1, response.getTotalCount());
+                segments, attributes, null, ProductModelTest.class);
+        Assert.assertEquals(0, response.getTotalCount());
     }
 
     @Test
@@ -218,8 +217,8 @@ public class OpusGatewayTest {
 
     @Test
     public void testGetSortings() {
-    	Ranking ranking = opusGatewayService.getSortings("cd1949e2-56a3-4595-a663-ae3f4b3353f9_Opus_Family");
-    	Assert.assertEquals(2, ranking.getItems().size());
+        List<Ranking> ranking = opusGatewayService.getSortings("cd1949e2-56a3-4595-a663-ae3f4b3353f9_Opus_Family");
+        Assert.assertEquals(2, ranking.size());
     }
-    
+
 }
