@@ -359,13 +359,15 @@ public interface OpusGatewayService {
      */
     <T> T getNetchandisingNode(String netchandisingNodeId, Class<T> modelClass);
 
-/**
+    /**
      * Find search suggestions based on keywords.
-     * OSGi Configuration pattern: com.adeo.connector.opus.SearchSuggetionRequest:/search/v2/suggest/phrase?input={0}&field={1}&size={2}:ContentSetProcessor
-     * @param keyword		The keyword to Search for.
-     * @param modelClass	The model class used to parse the OPUS response.
-     * @return				ContentSet instance containing all the results.
+     * OSGi Configuration pattern: com.adeo.connector.opus.SearchSuggestionRequest:/search/v2/suggest/phrase?input={0}&field={1}&size={2}:SuggestionProcessor
+     *
+     * @param input the input used to search
+     * @param field the field used to search in
+     * @param size  the size of the expected response
+     * @return a list of words
      */
-    <T> ContentSet<T> getSearchSuggestions(String keyword, Class<T> modelClass);
+    List<String> getSearchSuggestions(String input, String field, int size);
 
 }

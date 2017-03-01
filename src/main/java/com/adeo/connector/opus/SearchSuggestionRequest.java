@@ -2,9 +2,9 @@ package com.adeo.connector.opus;
 
 import com.adeo.connector.opus.gateway.OpusRequest;
 
-public class SearchSuggetionRequest extends OpusRequest {
+public class SearchSuggestionRequest extends OpusRequest {
 
-	public SearchSuggetionRequest(Class modelClass, String... arguments) {
+	public SearchSuggestionRequest(Class modelClass, String... arguments) {
 		super(modelClass, arguments);
 	}
 

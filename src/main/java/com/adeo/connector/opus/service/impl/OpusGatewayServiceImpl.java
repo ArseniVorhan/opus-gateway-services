@@ -300,52 +300,14 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
                 : null;
     }
 
-    
-    @Override
-    public <T> ContentSet<T> findFamily(String keyword, SearchFilterType filterType, Class<T> modelClass) {
-    	FamilySearchResquest request = new FamilySearchResquest(modelClass, keyword, filterType.toString());
-    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
-    }
-    
-    @Override
-    public <T> ContentSet<T> findSeries(String keyword, SearchFilterType filterType, Class<T> modelClass) {
-    	SeriesSearchRequest request = new SeriesSearchRequest(modelClass, keyword, filterType.toString());
-    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
-    }
-    
-    @Override
-    public <T> ContentSet<T> getSearchSuggestions(String keyword, Class<T> modelClass) {
-    	// Set default params
-    	String fieldParam = "sf.productname";
-    	String sizeParam = "1";
-    	
-    	OpusResponse<ContentSet<T>> response = executeSearchSuggestionsService(keyword, fieldParam, sizeParam, modelClass);
-    	if(response.getResults().size() > 0) {
-    		return response.getResults().get(0);
-    	}
-    	
-    	//2nd attempt
-    	fieldParam = "sf.productdesc";
-    	response = executeSearchSuggestionsService(keyword, fieldParam, sizeParam, modelClass);
-    	if(response.getResults().size() > 0) {
-    		return response.getResults().get(0);
-    	}
-    	
-    	//3rd attempt
-    	fieldParam = "sf.brand";
-    	response = executeSearchSuggestionsService(keyword, fieldParam, sizeParam, modelClass);
-    	return response.getResults().get(0);
-    }
 
-	private <T> OpusResponse<ContentSet<T>> executeSearchSuggestionsService(String keyword, String fieldParam, String sizeParam,
-			Class<T> modelClass) {
-		SearchSuggetionRequest request = new SearchSuggetionRequest(modelClass, keyword, fieldParam, sizeParam);
-    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-		return response;
-	}
+    @Override
+    public List<String> getSearchSuggestions(String input, String field, int size) {
+        SearchSuggestionRequest request = new SearchSuggestionRequest(null, input, field, Integer.toString(size));
+        OpusResponse<String> response = (OpusResponse) orchestratorService.execute(request);
+        return response != null && response.getResults() != null
+                ? response.getResults()
+                : Collections.emptyList();
+    }
 
 }

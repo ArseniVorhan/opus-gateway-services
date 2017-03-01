@@ -4,10 +4,7 @@ import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusGateway;
 import com.adeo.connector.opus.gateway.OpusGatewayMappings;
 import com.adeo.connector.opus.gateway.Ranking;
-import com.adeo.connector.opus.gateway.processors.ContentSetProcessor;
-import com.adeo.connector.opus.gateway.processors.ModelTypeProcessor;
-import com.adeo.connector.opus.gateway.processors.RankingProcessor;
-import com.adeo.connector.opus.gateway.processors.SegmentationProcessor;
+import com.adeo.connector.opus.gateway.processors.*;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
@@ -70,7 +67,7 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?startFrom={0}&pageSize={1}:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.NetchandisingContentsRequest:/business/v2/netchandisings/{0}/nodes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RankingListRequest:/business/v2/families/{0}/contentSet/ranking:RankingProcessor");
-        mappings.add("com.adeo.connector.opus.SearchSuggetionRequest:/search/v2/suggest/phrase?input={0}&field={1}&size={2}:ContentSetProcessor");
+        mappings.add("com.adeo.connector.opus.SearchSuggestionRequest:/search/v2/suggest/phrase?input={0}&field={1}&size={2}:SuggestionProcessor");
 
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
@@ -95,6 +92,7 @@ public class OpusGatewayTest {
         context.registerInjectActivateService(new ContentSetProcessor());
         context.registerInjectActivateService(new SegmentationProcessor());
         context.registerInjectActivateService(new RankingProcessor());
+        context.registerInjectActivateService(new SuggestionProcessor());
 
         context.registerInjectActivateService(new ExecutionPlanFactoryImpl(), ImmutableMap.<String, Object>builder()
                 .put("gateway.name", "opusGateway")
@@ -221,11 +219,11 @@ public class OpusGatewayTest {
         List<Ranking> ranking = opusGatewayService.getSortings("cd1949e2-56a3-4595-a663-ae3f4b3353f9_Opus_Family");
         Assert.assertEquals(2, ranking.size());
     }
-    
+
     @Test
     public void testGetSearchSuggestions() {
-    	ContentSet<SearchSuggestionModelTest> contentSet = opusGatewayService.getSearchSuggestions("hammer", SearchSuggestionModelTest.class);
-    	Assert.assertTrue(true);
+        List<String> suggestions = opusGatewayService.getSearchSuggestions("ab", "sf.brand", 20);
+        Assert.assertEquals(7, suggestions.size());
     }
 
 }
