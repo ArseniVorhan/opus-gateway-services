@@ -141,11 +141,13 @@ public interface OpusGatewayService {
      *
      * @param keyword    The keyword used for the search.
      * @param contexts   The context to filter contextualized attributes.
+     * @param startFrom  The starting index in the the product result list. Used in conjunction with pageSize it allow paginating the results.
+     * @param pageSize   The number of products to get.
      * @param modelClass The model class used to parse the OPUS response.
      * @param <T>        The model class expected.
      * @return The product instances.
      */
-    <T> ContentSet<T> findProducts(String keyword, List<Context> contexts, Class<T> modelClass);
+    <T> ContentSet<T> findProducts(String keyword, List<Context> contexts, int startFrom, int pageSize, Class<T> modelClass);
 
 
     /**

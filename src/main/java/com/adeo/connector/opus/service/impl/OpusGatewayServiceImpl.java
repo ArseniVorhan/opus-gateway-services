@@ -14,8 +14,6 @@ import com.adobe.connector.services.OrchestratorService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -37,10 +35,6 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
 
     @Reference
     private OrchestratorService orchestratorService;
-
-    private String buildContextParameters(List<String> context) {
-        return context.stream().collect(Collectors.joining("&context="));
-    }
 
     @Override
     public <T> T getProduct(String productId, List<Context> contexts, Class<T> modelClass) {
@@ -76,7 +70,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         ProductListRequest request = new ProductListRequest(modelClass, query, QueryBuilder.buildContextsParam(contexts));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                &&  CollectionUtils.isNotEmpty(response.getResults().get(0).getResults())
+                && CollectionUtils.isNotEmpty(response.getResults().get(0).getResults())
                 ? response.getResults().get(0).getResults()
                 : Collections.emptyList();
     }
@@ -87,7 +81,8 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, QueryBuilder.buildContextsParam(context), QueryBuilder.buildSegmentsFacetParam(segments), QueryBuilder.buildAttributesFacetParam(attributes),
                 QueryBuilder.buildFilterParam(segments, attributes), QueryBuilder.buildSortsParam(sorts), Integer.toString(startFrom), Integer.toString(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response.getResults().get(0);
+        return response != null && CollectionUtils.isNotEmpty(response.getResults())
+                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
     }
 
     @Override
@@ -133,8 +128,8 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> findProducts(String keyword, List<String> context, int startFrom, int pageSize, Class<T> modelClass) {
-        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, buildContextParameters(context), String.valueOf(startFrom), String.valueOf(pageSize));
+    public <T> ContentSet<T> findProducts(String keyword, List<Context> contexts, int startFrom, int pageSize, Class<T> modelClass) {
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, QueryBuilder.buildContextsParam(contexts), String.valueOf(startFrom), String.valueOf(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
                 ? response.getResults().get(0) : EMPTY_CONTENT_SET;
@@ -175,7 +170,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         final RegionRequest regionsRequest = new RegionRequest(modelClass, regionId);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionsRequest);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                &&  CollectionUtils.isNotEmpty(response.getResults().get(0).getResults())
+                && CollectionUtils.isNotEmpty(response.getResults().get(0).getResults())
                 ? response.getResults().get(0).getResults().get(0)
                 : null;
     }
@@ -240,9 +235,9 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     public List<Ranking> getSortings(String familyId) {
         RankingListRequest request = new RankingListRequest(null, familyId);
         OpusResponse<Ranking> response = (OpusResponse) orchestratorService.execute(request);
-        return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                ? response.getResults().get(0)
-                : null;
+        return response != null && response.getResults() != null
+                ? response.getResults()
+                : Collections.emptyList();
     }
 
     @Override
