@@ -69,6 +69,7 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.AllNetchandisingRequest:/business/v2/netchandisings?startFrom={0}&pageSize={1}:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.NetchandisingContentsRequest:/business/v2/netchandisings/{0}/nodes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RankingListRequest:/business/v2/families/{0}/contentSet/ranking:RankingProcessor");
+        mappings.add("com.adeo.connector.opus.SearchSuggetionRequest:/search/v2/suggest/phrase?input={0}&field={1}&size={2}:ContentSetProcessor");
         
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
@@ -222,4 +223,9 @@ public class OpusGatewayTest {
     	Assert.assertEquals(2, ranking.getItems().size());
     }
     
+    @Test
+    public void testGetSearchSuggestions() {
+    	ContentSet<SearchSuggestionModelTest> contentSet = opusGatewayService.getSearchSuggestions("hammer", SearchSuggestionModelTest.class);
+    	Assert.assertTrue(true);
+    }
 }
