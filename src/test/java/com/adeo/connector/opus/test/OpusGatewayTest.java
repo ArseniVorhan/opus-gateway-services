@@ -70,7 +70,8 @@ public class OpusGatewayTest {
         mappings.add("com.adeo.connector.opus.NetchandisingContentsRequest:/business/v2/netchandisings/{0}/nodes:ContentSetProcessor");
         mappings.add("com.adeo.connector.opus.RankingListRequest:/business/v2/families/{0}/contentSet/ranking:RankingProcessor");
         mappings.add("com.adeo.connector.opus.SearchSuggetionRequest:/search/v2/suggest/phrase?input={0}&field={1}&size={2}:ContentSetProcessor");
-        
+        mappings.add("com.adeo.connector.opus.FamiliesSearchRequest:/business/v2/families?query={0}*&mode=mask&mask=family&startFrom={1}&pageSize={2}:ContentSetProcessor");
+
 
         context.registerInjectActivateService(new OkHttpEndpointClient());
         context.registerInjectActivateService(new HttpEndpointConnector());
@@ -203,6 +204,13 @@ public class OpusGatewayTest {
         ContentSet<FamilyTest> contentSet = opusGatewayService.getFamilies("1", "10", FamilyTest.class);
         Assert.assertEquals(12, contentSet.getTotalCount());
         Assert.assertEquals("products for comparison", contentSet.getResults().get(0).getName());
+    }
+
+    @Test
+    public void testSearchFamilies() {
+        ContentSet<FamilyTest> contentSet = opusGatewayService.findFamilies("FamilyTest", "1", "10", FamilyTest.class);
+        Assert.assertEquals(3, contentSet.getTotalCount());
+        Assert.assertEquals("FamilyTest1DG", contentSet.getResults().get(0).getName());
     }
 
     @Test

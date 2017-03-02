@@ -263,6 +263,14 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
+    public <T> ContentSet<T> findFamilies(String query, String startFrom, String pageSize, Class<T> modelClass) {
+        final FamiliesSearchRequest familiesSearchRequest = new FamiliesSearchRequest(modelClass, query, startFrom, pageSize);
+        final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(familiesSearchRequest);
+        return response != null && CollectionUtils.isNotEmpty(response.getResults())
+                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
+    }
+
+    @Override
     public Ranking getSortings(String familyId) {
         RankingListRequest request = new RankingListRequest(null, familyId);
         OpusResponse<Ranking> response = (OpusResponse) orchestratorService.execute(request);

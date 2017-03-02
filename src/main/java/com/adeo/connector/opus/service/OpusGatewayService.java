@@ -241,7 +241,7 @@ public interface OpusGatewayService {
     <T> ContentSet<T> getProductsByBrand(String startFrom, String pageSize, List<String> brandNames, Class<T> modelClass);
 
     /**
-     * Get a list list of all families.
+     * Get a list of all families.
      * OSGi configuration pattern: com.adeo.connector.opus.FamiliesRequest:/business/v2/families?mode=mask&mask=MyMask&startFrom={0}&pageSize={1}:ContentSetProcessor
      *
      * @param startFrom  number of start page.
@@ -251,6 +251,19 @@ public interface OpusGatewayService {
      * @return ContentSet with all families
      */
     <T> ContentSet<T> getFamilies(String startFrom, String pageSize, Class<T> modelClass);
+
+    /**
+     * Get a list of families by query.
+     * OSGi configuration pattern: com.adeo.connector.opus.FamiliesSearchRequest:/business/v2/families?query={0}*&mode=mask&mask=MyMask&startFrom={1}&pageSize={2}:ContentSetProcessor
+     *
+     * @param query      query parameter.
+     * @param startFrom  number of start page.
+     * @param pageSize   count of products on one page.
+     * @param modelClass The model class used to parse the OPUS response.
+     * @param <T>        The model class expected. The model class has to match the OSGi configuration.
+     * @return ContentSet with all families
+     */
+    <T> ContentSet<T> findFamilies(String query, String startFrom, String pageSize, Class<T> modelClass);
 
     /**
      * Get a list of Sortings for a particular family
