@@ -261,7 +261,7 @@
         <dependency>
             <groupId>com.adeo.connector.adobe</groupId>
             <artifactId>aem-connector-opus</artifactId>
-            <version>1.19-SNAPSHOT</version>
+            <version>1.19</version>
         </dependency>
     </dependencies>
 </project>

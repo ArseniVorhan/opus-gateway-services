@@ -7,9 +7,7 @@ import com.adeo.connector.opus.gateway.Ranking;
 import com.adeo.connector.opus.gateway.processors.*;
 import com.adeo.connector.opus.service.OpusGatewayService;
 import com.adeo.connector.opus.service.impl.OpusGatewayServiceImpl;
-import com.adeo.connector.opus.service.models.FamilyAttribute;
-import com.adeo.connector.opus.service.models.FamilySegment;
-import com.adeo.connector.opus.service.models.FixedValues;
+import com.adeo.connector.opus.service.models.*;
 import com.adeo.connector.opus.test.models.*;
 import com.adobe.connector.gateway.connection.http.HttpEndpointConnector;
 import com.adobe.connector.gateway.connection.http.OkHttpEndpointClient;
@@ -76,7 +74,7 @@ public class OpusGatewayTest {
 
         context.registerInjectActivateService(opusGateway, ImmutableMap.<String, Object>builder()
                 .put("gateway.name", "opusGateway")
-                .put("opus.url.domain", "192.168.14.154:4545")
+                .put("opus.url.domain", "192.168.14.151:4545")
                 .put("opus.url.context", "")
                 .put("opus.url.scheme", "http")
                 .put("opus.auth.username", "wikeo")
@@ -127,11 +125,11 @@ public class OpusGatewayTest {
         OpusGatewayService service = context.getService(OpusGatewayService.class);
 
         List<FamilyAttribute> attributes = new ArrayList<>();
-        attributes.add(new FamilyAttribute("377%40PimFeat", new FixedValues("SENSEA")));
+        attributes.add(new FamilyAttribute("color", new FixedValues("black", "white")));
 
-        ContentSet<ProductModelTest> response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 20, 1, null, attributes,
-                null, ProductModelTest.class);
-        Assert.assertEquals(189, response.getTotalCount());
+//        ContentSet<ProductModelTest> response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 20, 1, null, attributes,
+//                null, ProductModelTest.class);
+//        Assert.assertEquals(189, response.getTotalCount());
 
         List<FamilySegment[]> segments = new ArrayList<>();
         segments.add(new FamilySegment[]{new FamilySegment("d91d347d-5397-4139-a6c2-ae2a9fc6f441_Opus_Segment", true),
@@ -141,15 +139,20 @@ public class OpusGatewayTest {
                 new FamilySegment("a1b6556a-6da2-4abd-a748-be94afd6ea8c_Opus_Segment", false)});
         segments.add(new FamilySegment[]{new FamilySegment("134ffe8c-74f9-4b12-8ce0-233907d26523_Opus_Segment", true),
                 new FamilySegment("9609cac7-eca2-4467-a89a-c6baa4ed4984_Opus_Segment", false)});
-        response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
-                segments, null, null, ProductModelTest.class);
-        Assert.assertEquals(0, response.getTotalCount());
+//        response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
+//                segments, null, null, ProductModelTest.class);
+//        Assert.assertEquals(0, response.getTotalCount());
 
 
         attributes = new ArrayList<>();
-        attributes.add(new FamilyAttribute("377%40PimFeat", new FixedValues("SENSEA", "NO NAME")));
-        response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
-                segments, attributes, null, ProductModelTest.class);
+        attributes.add(new FamilyAttribute("color", new FixedValues("white", "black")));
+        attributes.add(new FamilyAttribute("price", new IntervalValues("100", "200")));
+        List<FamilySort> sorts = new ArrayList<>();
+        sorts.add(new FamilySort("color", FamilySort.Order.ASC));
+        sorts.add(new FamilySort("price", FamilySort.Order.DESC));
+        ContentSet<ProductModelTest> response = service.getProducts("ef058db2-3427-4264-9709-41fa0628e4b7_Opus_Family", null, 1, 20,
+                segments, attributes, sorts, ProductModelTest.class);
+
         Assert.assertEquals(0, response.getTotalCount());
     }
 
