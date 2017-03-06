@@ -5,14 +5,15 @@ import com.adeo.connector.opus.gateway.ContentSet;
 import com.adeo.connector.opus.gateway.OpusResponse;
 import com.adeo.connector.opus.gateway.Ranking;
 import com.adeo.connector.opus.service.OpusGatewayService;
+import com.adeo.connector.opus.service.models.Context;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.models.FamilySegment;
+import com.adeo.connector.opus.service.models.FamilySort;
+import com.adeo.connector.opus.service.utils.QueryBuilder;
 import com.adobe.connector.services.OrchestratorService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -20,7 +21,6 @@ import org.apache.felix.scr.annotations.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by stievena on 28/10/16.
@@ -36,13 +36,9 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     @Reference
     private OrchestratorService orchestratorService;
 
-    private String buildContextParameters(List<String> context) {
-        return context.stream().collect(Collectors.joining("&context="));
-    }
-
     @Override
-    public <T> T getProduct(String productId, List<String> context, Class<T> modelClass) {
-        ProductRequest request = new ProductRequest(modelClass, productId, buildContextParameters(context));
+    public <T> T getProduct(String productId, List<Context> contexts, Class<T> modelClass) {
+        ProductRequest request = new ProductRequest(modelClass, productId, QueryBuilder.buildContextsParam(contexts));
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
                 ? response.getResults().get(0)
@@ -50,9 +46,9 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> T getProduct(String productId, List<String> context, List<String> masks, Class<T> modelClass) {
-        String masksString = masks.stream().collect(Collectors.joining(","));
-        ProductWithMasksRequest request = new ProductWithMasksRequest(modelClass, productId, buildContextParameters(context), masksString);
+    public <T> T getProduct(String productId, List<Context> contexts, List<String> masks, Class<T> modelClass) {
+        String masksString = masks.stream().collect(Collectors.joining("%2C"));
+        ProductWithMasksRequest request = new ProductWithMasksRequest(modelClass, productId, QueryBuilder.buildContextsParam(contexts), masksString);
         OpusResponse<T> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
                 ? response.getResults().get(0)
@@ -69,62 +65,21 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> List<T> getProducts(List<String> productIds, List<String> context, Class<T> modelClass) {
-        String query = productIds.stream().collect(Collectors.joining(" OR "));
-        ProductListRequest request = new ProductListRequest(modelClass, query, buildContextParameters(context));
+    public <T> List<T> getProducts(List<String> productIds, List<Context> contexts, Class<T> modelClass) {
+        String query = productIds.stream().collect(Collectors.joining("%20OR%20"));
+        ProductListRequest request = new ProductListRequest(modelClass, query, QueryBuilder.buildContextsParam(contexts));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                &&  CollectionUtils.isNotEmpty(response.getResults().get(0).getResults())
+                && CollectionUtils.isNotEmpty(response.getResults().get(0).getResults())
                 ? response.getResults().get(0).getResults()
                 : Collections.emptyList();
     }
+
     @Override
-    public <T> ContentSet<T> getProducts(String familyId, List<String> context, int startFrom, int pageSize, List<FamilySegment[]> segments,
-                                         List<FamilyAttribute> attributes, String sortAttribute, boolean ascSorting, Class<T> modelClass) {
-        String defaultFacets = "";
-        String defaultAttributes = "";
-        String filterSegments = "";
-        String filterAttributes = "";
-        String defaultSort = "";
-
-        if (segments != null) {
-            final String segmentsQuery = segments.stream()
-                    .map(s -> Stream.of(s)
-                            .filter(FamilySegment::isEnabled)
-                            .map(FamilySegment::getId)
-                            .collect(Collectors.joining(" OR ", "(", ")")))
-                    .filter(s -> !s.equals("()"))
-                    .collect(Collectors.joining(" AND "));
-            filterSegments = segmentsQuery.isEmpty() ? "" : "inContentSet:" + segmentsQuery;
-            defaultFacets = segments.stream()
-                    .flatMap(Stream::of)
-                    .map(FamilySegment::getId)
-                    .collect(Collectors.joining("%2C"));
-        }
-
-        if (attributes != null) {
-            filterAttributes = attributes.stream()
-                    .filter(a -> !ArrayUtils.isEmpty(a.getValues()))
-                    .map(attribute -> "@(" + attribute.getName() + ")%3A"
-                            + Stream.of(attribute.getValues()).collect(Collectors.joining("%2C")))
-                    .collect(Collectors.joining("&filter="));
-            defaultFacets += attributes.stream()
-                    .map(FamilyAttribute::getName)
-                    .collect(Collectors.joining("", "&facet.attribute=@(", ")"));
-        }
-
-        String filter = Stream.of(filterAttributes, filterSegments)
-                .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.joining(" AND "));
-
-        if (!StringUtils.isEmpty(sortAttribute)) {
-            defaultSort = new StringBuilder("@(")
-                    .append(sortAttribute)
-                    .append(")%20")
-                    .append(ascSorting ? "asc" : "desc").toString();
-        }
-        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, buildContextParameters(context), defaultFacets, defaultAttributes,
-                filter, defaultSort, Integer.toString(startFrom), Integer.toString(pageSize));
+    public <T> ContentSet<T> getProducts(String familyId, List<Context> context, int startFrom, int pageSize, List<FamilySegment[]> segments,
+                                         List<FamilyAttribute> attributes, List<FamilySort> sorts, Class<T> modelClass) {
+        FamilyProductsRequest request = new FamilyProductsRequest(modelClass, familyId, QueryBuilder.buildContextsParam(context), QueryBuilder.buildSegmentsFacetParam(segments), QueryBuilder.buildAttributesFacetParam(attributes),
+                QueryBuilder.buildFilterParam(segments, attributes), QueryBuilder.buildSortsParam(sorts), Integer.toString(startFrom), Integer.toString(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
                 ? response.getResults().get(0) : EMPTY_CONTENT_SET;
@@ -173,16 +128,32 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public <T> ContentSet<T> findProducts(String keyword, List<String> context, int startFrom, int pageSize, Class<T> modelClass) {
-        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, buildContextParameters(context), String.valueOf(startFrom), String.valueOf(pageSize));
+    public <T> ContentSet<T> findProducts(String keyword, List<Context> contexts, int startFrom, int pageSize, Class<T> modelClass) {
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, QueryBuilder.buildContextsParam(contexts), String.valueOf(startFrom), String.valueOf(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
                 ? response.getResults().get(0) : EMPTY_CONTENT_SET;
     }
 
     @Override
-    public <T> ContentSet<T> findServices(String keyword, Class<T> modelClass) {
-        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword);
+    public <T> ContentSet<T> findServices(String keyword, int startFrom, int pageSize, Class<T> modelClass) {
+        ProductSearchRequest request = new ProductSearchRequest(modelClass, keyword, String.valueOf(startFrom), String.valueOf(pageSize));
+        OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+        return response != null && CollectionUtils.isNotEmpty(response.getResults())
+                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
+    }
+
+    @Override
+    public <T> ContentSet<T> findFamily(String keyword, int startFrom, int pageSize, Class<T> modelClass) {
+        FamilySearchResquest request = new FamilySearchResquest(modelClass, keyword, String.valueOf(startFrom), String.valueOf(pageSize));
+        OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
+        return response != null && CollectionUtils.isNotEmpty(response.getResults())
+                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
+    }
+
+    @Override
+    public <T> ContentSet<T> findSeries(String keyword, int startFrom, int pageSize, Class<T> modelClass) {
+        SeriesSearchRequest request = new SeriesSearchRequest(modelClass, keyword, String.valueOf(startFrom), String.valueOf(pageSize));
         OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
                 ? response.getResults().get(0) : EMPTY_CONTENT_SET;
@@ -201,7 +172,7 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
         final RegionRequest regionsRequest = new RegionRequest(modelClass, regionId);
         final OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(regionsRequest);
         return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                &&  CollectionUtils.isNotEmpty(response.getResults().get(0).getResults())
+                && CollectionUtils.isNotEmpty(response.getResults().get(0).getResults())
                 ? response.getResults().get(0).getResults().get(0)
                 : null;
     }
@@ -263,12 +234,12 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
     }
 
     @Override
-    public Ranking getSortings(String familyId) {
+    public List<Ranking> getSortings(String familyId) {
         RankingListRequest request = new RankingListRequest(null, familyId);
         OpusResponse<Ranking> response = (OpusResponse) orchestratorService.execute(request);
-        return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                ? response.getResults().get(0)
-                : null;
+        return response != null && response.getResults() != null
+                ? response.getResults()
+                : Collections.emptyList();
     }
 
     @Override
@@ -329,52 +300,14 @@ public class OpusGatewayServiceImpl implements OpusGatewayService {
                 : null;
     }
 
-    
-    @Override
-    public <T> ContentSet<T> findFamily(String keyword, SearchFilterType filterType, Class<T> modelClass) {
-    	FamilySearchResquest request = new FamilySearchResquest(modelClass, keyword, filterType.toString());
-    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
-    }
-    
-    @Override
-    public <T> ContentSet<T> findSeries(String keyword, SearchFilterType filterType, Class<T> modelClass) {
-    	SeriesSearchRequest request = new SeriesSearchRequest(modelClass, keyword, filterType.toString());
-    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-        return response != null && CollectionUtils.isNotEmpty(response.getResults())
-                ? response.getResults().get(0) : EMPTY_CONTENT_SET;
-    }
-    
-    @Override
-    public <T> ContentSet<T> getSearchSuggestions(String keyword, Class<T> modelClass) {
-    	// Set default params
-    	String fieldParam = "sf.productname";
-    	String sizeParam = "1";
-    	
-    	OpusResponse<ContentSet<T>> response = executeSearchSuggestionsService(keyword, fieldParam, sizeParam, modelClass);
-    	if(response.getResults().size() > 0) {
-    		return response.getResults().get(0);
-    	}
-    	
-    	//2nd attempt
-    	fieldParam = "sf.productdesc";
-    	response = executeSearchSuggestionsService(keyword, fieldParam, sizeParam, modelClass);
-    	if(response.getResults().size() > 0) {
-    		return response.getResults().get(0);
-    	}
-    	
-    	//3rd attempt
-    	fieldParam = "sf.brand";
-    	response = executeSearchSuggestionsService(keyword, fieldParam, sizeParam, modelClass);
-    	return response.getResults().get(0);
-    }
 
-	private <T> OpusResponse<ContentSet<T>> executeSearchSuggestionsService(String keyword, String fieldParam, String sizeParam,
-			Class<T> modelClass) {
-		SearchSuggetionRequest request = new SearchSuggetionRequest(modelClass, keyword, fieldParam, sizeParam);
-    	OpusResponse<ContentSet<T>> response = (OpusResponse) orchestratorService.execute(request);
-		return response;
-	}
+    @Override
+    public List<String> getSearchSuggestions(String input, String field, int size) {
+        SearchSuggestionRequest request = new SearchSuggestionRequest(null, input, field, Integer.toString(size));
+        OpusResponse<String> response = (OpusResponse) orchestratorService.execute(request);
+        return response != null && response.getResults() != null
+                ? response.getResults()
+                : Collections.emptyList();
+    }
 
 }

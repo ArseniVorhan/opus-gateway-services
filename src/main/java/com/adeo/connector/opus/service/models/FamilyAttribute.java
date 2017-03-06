@@ -6,9 +6,9 @@ package com.adeo.connector.opus.service.models;
 public class FamilyAttribute {
 
     private String name;
-    private String[] values;
+    private FamilyAttributeValue values;
 
-    public FamilyAttribute(String name, String[] values) {
+    public FamilyAttribute(String name, FamilyAttributeValue values) {
         this.name = name;
         this.values = values;
     }
@@ -21,11 +21,11 @@ public class FamilyAttribute {
         this.name = name;
     }
 
-    public String[] getValues() {
+    public FamilyAttributeValue getValues() {
         return values;
     }
 
-    public void setValues(String[] values) {
+    public void setValues(FamilyAttributeValue values) {
         this.values = values;
     }
 }
