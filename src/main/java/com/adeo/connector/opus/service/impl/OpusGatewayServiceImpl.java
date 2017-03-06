@@ -9,7 +9,7 @@ import com.adeo.connector.opus.service.models.Context;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
 import com.adeo.connector.opus.service.models.FamilySegment;
 import com.adeo.connector.opus.service.models.FamilySort;
-import com.adeo.connector.opus.utils.QueryBuilder;
+import com.adeo.connector.opus.service.utils.QueryBuilder;
 import com.adobe.connector.services.OrchestratorService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

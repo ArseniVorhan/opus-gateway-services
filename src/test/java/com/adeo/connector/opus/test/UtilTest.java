@@ -1,7 +1,7 @@
 package com.adeo.connector.opus.test;
 
 import com.adeo.connector.opus.service.models.*;
-import com.adeo.connector.opus.utils.QueryBuilder;
+import com.adeo.connector.opus.service.utils.QueryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package com.adeo.connector.opus.utils;
+package com.adeo.connector.opus.service.utils;
 
 import com.adeo.connector.opus.service.models.Context;
 import com.adeo.connector.opus.service.models.FamilyAttribute;
